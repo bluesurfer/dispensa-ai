@@ -1,0 +1,295 @@
+\chapter{Ottimizzazione con le Reti Neurali} % (fold)
+\label{cha:ottimizzazione_con_le_reti_neurali}
+In questo capitolo si analizza l'utilizzo di una rete di Hopfield, come strumento di ottimizzazzione, per fornire una soluzione ottimale a problemi NP-Difficile. In particolare sarà introdotto il problema del commesso viaggiatore (Traveling Salesman Problem).
+
+\section{Problema del commesso viaggiatore} % (fold)
+\label{sec:problema_del_commesso_viaggiatore}
+In questa sezione si introduce il problema del commesso viaggiatore (abbreviato TSP) e una sua possibile soluzione attraverso l'utilizzo delle reti di Hopfield.\\
+
+Il nome del problema nasce dalla sua più tipica rappresentazione: data una rete di città, connesse tramite delle strade, trovare il percorso di minore lunghezza che un commesso viaggiatore deve seguire per visitare tutte le città una e una sola volta per poi tornare alla città di partenza.\\
+
+Il problema è di considerevole importanza pratica, al di là delle ovvie applicazioni nella logistica e nei trasporti. Un esempio classico è la costruzione di circuiti stampati, nella pianificazione del percorso del trapano per creare i fori nella piastra.
+
+
+\subsection{Formulazione del problema} % (fold)
+\label{sub:formulazione_del_problema}
+Espresso nei termini della teoria dei grafi il TSP è così formulato: \emph{dato un grafo completo pesato $G=(V, E, w)$, trovare il cammino di costo minore visitando tutti i nodi $V$ una sola volta e tornando al nodo di partenza.}\\
+
+La rete di città può essere rappresentata come un grafo in cui le città sono i nodi $V$, le strade gli archi $E$ e le distanze i pesi sugli archi $w$. La differenza sostanziale rispetto al Ciclo Hamiltoniano si trova nel fatto che quest'ultimo è formulato su di un grafo privo di pesi. Il problema è NP-completo: per poter trovare il percorso minimo è necessario elencare tutti gli \textbf{$n!$} percorsi.
+
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        
+        \node[circle,fill=blue!20] (A) at (0,2) {A};
+        \node[circle,fill=blue!20] (B) at (-2,0) {B};
+        \node[circle,fill=blue!20] (C) at (2,0) {C};
+        \node[circle,fill=blue!20] (D) at (0, -2) {D};
+        
+        \foreach \from / \to in {B/A,B/D}
+            \path (\from) edge[left] node {$w_{\from\to}$} (\to);
+        
+        \foreach \from / \to in {C/A,C/D}
+             \path (\from) edge[right] node {$w_{\from\to}$} (\to);
+             
+         \path (A) edge[below left=0.1cm  of A] node {$w_{AD}$} (D);
+         \path (B) edge[above right=0.1cm  of C] node {$w_{BC}$} (C);
+             
+    \end{tikzpicture}
+    \caption{Grafo completo pesato.}\label{fig:graph}
+\end{figure}
+
+% subsection formulazione_del_problema (end)
+
+\subsection{Soluzione del TSP con le reti di Hopfield} % (fold)
+\label{sub:soluzione_del_tsp_con_le_reti_di_hopfield}
+Risolvere un problema di ottimizzazione con le reti di Hopfield richiede di \emph{trovare una funzione di energia $E$ adeguata in modo tale che il minimo corrisponda alla soluzione del problema che si sta affrontando.}\\
+
+Per prima cosa è necessario rappresentare il TSP attraverso una matrice di permutazione per identificare un percorso. Ad esempio dato il grafo in Figura~\ref{fig:graph}, il percorso $B \rightarrow A \rightarrow C \rightarrow D$ può essere rappresentato con la seguente matrice:\\
+
+\begin{table}[h!]
+    \centering
+    \begin{tabularx}{8cm}{lXXXX}
+        \toprule
+        \backslashbox{Città}{Fermata} & 1 & 2 & 3 & 4 \\
+        \midrule
+        A & 0 & \textbf{1} & 0 & 0 \\
+        B & \textbf{1} & 0 & 0 & 0 \\
+        C & 0 & 0 & \textbf{1} & 0 \\
+        D & 0 & 0 & 0 & \textbf{1} \\
+        \bottomrule
+    \end{tabularx}
+    \caption{Matrice di permutazione del percorso BACD}
+\end{table}
+
+Dunque per $n$ città saranno necessari $n \times n$ neuroni nella rete di Hopfield in cui ogni neurone identifica una città e una fermata.
+
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        
+        \foreach \x / \y in {1/1,2/2,3/3,4/4} {
+            \node (0-\x) at (0, -\x) {\y};
+            \node (\x-0) at (\x, 0) {\x};
+        }
+        
+        \foreach \x in {1,...,4} {
+            \foreach \y in {1,...,4} 
+                \node[circle, fill=black!20] (\x-\y) at (\x, -\y) {};
+        }
+        
+        \foreach \x / \y in {1/1, 1/2, 1/3, 1/4, 2/1, 2/3, 2/4, 3/1, 3/2, 3/3, 3/4, 4/1, 4/2, 4/3, 4/4}
+            \path (2-2) edge[dotted, ->] (\x-\y);
+        
+        \foreach \x / \y in {1/1, 1/3, 3/3,3/1, 3/4, 4/1}
+            \path (2-2) edge[->] (\x-\y);
+        
+        \foreach \x / \y in {1/2, 2/1, 3/3, 4/4} {
+            \node[circle, fill=black] at (\x,-\y) {};
+        }
+        
+        \node[above of=2-0] {Fermate};
+        \node[left of=0-2, rotate=90] {Città};
+        
+    \end{tikzpicture}
+    \caption{Rappresentazione di una rete di Hopfield in un TSP con quattro città $n=4$. I punti neri indicano le unità attive $=1$ quando la rete sta rappresentando il percorso $3 \rightarrow 2 \rightarrow 4 \rightarrow 1$. Le connessioni sono mostrate solo per l'unità $n_{22}$. Linee solide indicano connessioni inibitorie di forza $- d_{ij}$, mentre linee tratteggiate sono connessioni inibitorie uniformi di forza $-Y$. Tutte le connessioni sono simmetriche.} 
+\end{figure}
+
+La soluzione del problema sarà dunque una matrice $V$ di dimensione $n \times n$. Si introducono ora alcune notazioni:
+\begin{itemize}
+    \item $X$ indica la città;
+    \item $i$ una fermata in cui è visitata una città;
+    \item $V_{X,i}$ è l'output dell'unità $X, i$;
+    \item $T_{Xi, Yj}$ sono i pesi delle connessioni;
+    \item $V_{X,i} = 1$ se la città $X$ è visitata alla fermata $i$;
+    \item $d_{X,Y}$ distanza tra la città $X$ e $Y$.
+\end{itemize}
+
+Si definisce ora la funzione obiettivo da minimizzare che rappresenta il costo totale del cammino:
+\begin{align*}
+    E_1  = \frac{D}{2} \sum_X \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i} (V_{Y, i-1} + V_{Y, i+1})
+\end{align*}
+dove $D$ è una costante e gli indici sono intesi modulo $n$. La matrice $V$ senza vincoli di alcun genere può descrivere zero o più percorsi di lunghezza arbitraria (quindi può anche non toccare tutte le città).
+Se la matrice $V$ descrivesse solo percorsi unici Hamiltoniani, allora minimizzando la funzione costo $E_1$ otterremmo la soluzione. Tuttavia il problema del commesso viaggiatore presenta una serie di \textbf{vincoli} che devono essere rispettati dalla matrice $V$.
+
+\newpage
+
+
+\begin{figure}[h!]
+    \centering
+    
+    \subfigure{
+    \begin{tikzpicture}
+        
+        \foreach \x / \y in {1/A,2/B,3/C,4/D} {
+            \node (0-\x) at (0, -\x) {\y};
+            \node (\x-0) at (\x, 0) {\x};
+        }
+        
+        \foreach \x in {1,...,4} {
+            \foreach \y in {1,...,4} 
+                \node[circle, fill=black!20] (\x-\y) at (\x, -\y) {};
+        }
+
+        \foreach \x / \y in {1/2, 2/1, 3/3, 4/4} {
+            \node[circle, fill=black] at (\x,-\y) {};
+        }
+        
+        \draw[green, thick] (0.5,0.5) rectangle (1.5,-4.5);
+        
+    \end{tikzpicture}}
+    \qquad
+    \subfigure{
+    \begin{tikzpicture}
+        \foreach \x / \y in {1/A,2/B,3/C,4/D}
+            \node (0-\x) at (0, -\x) {\y};
+        
+        \foreach \x / \y in {1/$i-1$, 2/$i$, 3/$i+1$}
+            \node (\x-0) at (\x, 0) {\y};
+        
+        \foreach \x in {1,...,3}
+            \foreach \y in {1,...,4} 
+                \node[circle, fill=black!20] at (\x, -\y) {}; 
+                
+        \foreach \x / \y in {4/1, 2/2, 1/3} {
+            \node[circle, fill=black] at (\y,-\x) {};
+        
+        \draw[green, thick] (1.5,0.5) rectangle (2.5,-4.5);
+        }
+    \end{tikzpicture}}
+    \caption{Interpretazione grafica di $E_1$}
+\end{figure}
+
+Di seguito si riportano i vincoli per il TSP:
+
+\begin{enumerate}
+    \item \textbf{Vincolo sulle righe}: Ogni città deve essere visitata una sola volta. Ovvero le righe della matrice $V$ devono avere soltanto un elemento impostato ad 1, il resto a 0;
+    \begin{align*}
+        E_2 = \frac{A}{2} \sum_X \sum_i \sum_{j \neq i} V_{X,i} V_{X,j}
+    \end{align*}
+    che vale 0 (il minimo) se ogni città è visitata al massimo una volta.
+    \item \textbf{Vincolo sulle colonne}: Ogni fermata deve contenere una città, ovvero ogni colonna della matrice $V$ abbia un elemento impostato ad 1 ed il resto a 0;
+    \begin{align*}
+        E_3 = \frac{B}{2} \sum_i \sum_X \sum_{Y \neq X} V_{X,i} V_{Y,i}
+    \end{align*}
+    che vale 0 se ogni step del tour contiene al massimo una città.
+    \item \textbf{Vincolo sulle entrate}: in totale devono essere attraversate $n$ città.
+    \begin{align*}
+        E_4 = \frac{C}{2}\left(\sum_X \sum_i V_{X,i} - n \right)^2
+    \end{align*}
+    che vale 0 se il numero di città attraversate è esattamente $n$.
+\end{enumerate}
+
+\newpage
+
+Ci si trova dunque con quattro funzioni energia da minimizzare, tuttavia per poter utilizzare una rete di Hopfield è necessaria un'unica funzione. Per questo motivo si esprime la funzione costo totale come combinazione lineare delle funzioni energia $E_i$:
+\begin{align}
+    E = E_1 + E_2 + E_3 + E_4
+\end{align}
+dove il peso da attribuire a ciascun termine è determinato dalle costanti positive $A, B, C, D$. La funzione energia risultante dovrà essere della forma tipica di una rete di Hopfield ovvero nella forma dell'Equazione~\eqref{eq:energy}:
+\begin{align*}
+     E = - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{X_i, Y_j} V_{X_i} V_{Y_j} - \sum_{X_i} I_{X_i} V_{X_i}
+\end{align*}
+Per ricondursi alla funzione energia tipica di Hopfield si utilizza un “trucco”: si introduce il seguente termine:
+\begin{align*}
+	\delta_{i,j} =
+	\begin{cases}
+		1, &\text{ se } i = j\\
+		0, &\text{ se } i \neq j \\
+	\end{cases}
+\end{align*}
+Le funzioni energia si possono ora riscrivere nel seguente modo:
+\begin{align*}
+	E_1 &= \frac{D}{2} \sum_X \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i} (V_{Y, i+1} + V_{Y, i-1}) \\
+	&=  \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} \cdot (\delta_{j, i-1} + \delta_{j, i+1})
+\end{align*}
+
+\begin{align*}
+    E_2 &= \frac{A}{2} \sum_X \sum_i \sum_{j \neq i} V_{X,i} V_{X,j} \\
+	&= \frac{A}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{X,Y} (1 - \delta_{i,j})
+\end{align*}
+
+\begin{align*}
+    E_3 &= \frac{B}{2} \sum_i \sum_X \sum_{Y \neq X} V_{X,i} V_{Y,i} \\
+	&= \frac{B}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{i,j} (1 - \delta_{X,Y})
+\end{align*}
+
+\begin{align*}
+    E_4 &= \frac{C}{2}\left(\sum_X \sum_i V_{X,i} - n \right)^2 \\
+	&= \frac{C}{2} \left(\left(\sum_X \sum_i V_{X,i}\right)^2 - 2n \cdot \sum_X \sum_i V_{X,i} + n^2 \right)
+\end{align*}
+dove
+\begin{align*}
+	\left(\sum_X \sum_i V_{X,i}\right)^2 &= \left(\sum_X \sum_i V_{X,i}\right) \cdot \left(\sum_X \sum_i V_{X,i} \right) \\
+	&= \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j}
+\end{align*}
+In $E_4$ il termine costante $n^2$ si può tralasciare, in quanto non modifica il punto in cui si ottiene il minimo, ma il valore della funzione $E_4$ in corrispondenza del minimo.
+Mettendo il tutto assieme si ottiene la \textbf{funzione di energia totale}:
+\begin{align*}
+	E &= \frac{A}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{X,Y} (1 - \delta_{i,j}) \\
+	&+ \frac{B}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{i,j} (1 - \delta_{X,Y}) \\
+	&+ \frac{C}{2} \left(\sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} - \sum_{X,i} V_{X,i} \right) \\
+	&+ \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} \cdot (\delta_{j, i-1} + \delta_{j, i+1}) \\
+	&= - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{X_i, Y_j} V_{X_i} V_{Y_j} - \sum_{X_i} I_{X_i} V_{X_i}
+\end{align*}
+Dove $T_{Xi, Yj}$ sono i pesi che la rete deve scoprire:
+\begin{align*}
+	T_{Xi, Yj} &= - A \delta_{XY} (1 - \delta_{ij}) \tag{peso inibitorio in ogni riga}\\
+	& - B \delta_{ij} (1 - \delta_{XY}) \tag{peso inibitorio in ogni colonna} \\
+	& - C  \qquad \tag{Inibizione globale}\\
+	& - D d_{XY} (\delta_{j,i-1} + \delta_{j, i+1}) \tag{Termine dei dati}
+\end{align*}
+e il vettore di corrente esterna $I$ ha come $Xi$-esima componente:
+\begin{align*}
+	I_{Xi} = C_n \tag{Corrente esterna eccitatoria}
+\end{align*}
+% subsection soluzione_del_tsp_con_le_reti_di_hopfield (end)
+
+\newpage
+
+\subsection{Un'altra formulazione} % (fold)
+\label{sub:un_altra_formulazione}
+La determinazione dei parametri $A, B, C, D$ è particolarmente difficile. Pertanto un altro modo per esprimere i vincoli del TSP (cioè la matrice di permutazione $V$) è il seguente:
+\begin{align*}
+	E_2 = \frac{A}{2} \sum_X \left(\sum_i V_{X, i} - 1 \right) ^ 2 \tag{Vincolo sulle righe} \\
+	E_3 = \frac{B}{2} \sum_i \left(\sum_X V_{X, i} - 1 \right) ^ 2 \tag{Vincolo sulle colonne} \\
+\end{align*}
+Quindi la funzione energia diventa:
+\begin{align*}
+	E = \frac{D}{2} \sum_{X} \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i}(V_{Y, i + 1} + V_{Y, i - 1}) + E_2 + E_3
+\end{align*}
+Dal momento che $E_4$ non è usato abbiamo tre parametri anziché quattro.
+% subsection un_altra_formulazione (end)
+
+
+\subsection{Problema delle n regine} % (fold)
+\label{sub:problema_delle_n_regine}
+Una famosa variante del TSP è il \emph{problema delle n regine}. Si immagini una scacchiera $n \times n$ e $n$ regine; una regina può muoversi lungo le righe, le colonne e le diagonali. Il problema consiste nel posizionare questi $n$ pezzi in modo tale che nessuno di essi possa attaccarsi l'uno contro l'altro.\\
+
+Si può costruire una rete di Hopfield $n \times n$ in cui il neurone $(i,j)$ è attivo se e solo se una regina occupa la posizione $(i,j)$. Ci sono inoltre quattro vincoli:
+\begin{enumerate}
+    \item solo una regina in ciascuna riga;
+    \item solo una regina in ciascuna colonna;
+    \item solo una regina in ciascuna diagonale;
+    \item solo $n$ regine sulla scacchiera.
+\end{enumerate}
+
+\newpage
+
+Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La matrice dei pesi è quindi data da:
+\begin{align*}
+	- T_{ij,kl} &= - A \delta_{ik} (1 - \delta_{ij}) \tag{peso inibitorio in ogni riga}\\
+	& + B \delta_{jl} (1 - \delta_{ik}) \tag{peso inibitorio in ogni colonna} \\
+	& + C  \qquad \tag{Inibizione globale}\\
+	& + D (\delta_{i+j,k-l} + \delta_{i-j, k-l})(1 - \delta_{ik}) \tag{peso inibitorio sulle diagonale}
+\end{align*}
+% subsection problema_delle_n_regine (end)
+% section problema_del_commesso_viaggiatore (end)
+
+\newpage
+
+% chapter ottimizzazione_con_le_reti_neurali (end)

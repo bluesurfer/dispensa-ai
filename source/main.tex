@@ -1,0 +1,61 @@
+\documentclass[twoside,
+               openright,
+               titlepage,
+               numbers=noenddot,
+               headinclude,
+               footinclude=true,
+               cleardoublepage=empty,
+               fleqn,
+               paper=a4,
+               fontsize=11pt,
+               italian]{scrreprt} 
+                
+\input{config}
+
+\begin{document}
+
+\frenchspacing
+\raggedbottom
+\pagenumbering{roman}
+\pagestyle{plain}
+
+\include{frontback/titlepage}
+
+\pagestyle{scrheadings}
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+
+
+%----------------------------------------------------------------------------------------
+
+\pagenumbering{arabic}
+\cleardoublepage
+\part{Reti Neurali} % (fold)
+\label{prt:reti_neurali}
+
+\include{chapters/01-modelloneurale}
+\include{chapters/02-classificazione}
+\include{chapters/03-backpropagation}
+\include{chapters/04-euristiche}
+\include{chapters/05-hopfield}
+\include{chapters/06-ottimizzazione}
+
+\part{Teoria dei Giochi}
+
+\include{chapters/07-teoriadeigiochi}
+\include{chapters/08-replicazione}
+\include{chapters/09-clustering}
+
+
+\appendix
+
+\part{Appendice}
+
+\include{chapters/A-derivate} % Appendix A
+
+
+\cleardoublepage\include{frontback/bibliography}
+
+
+\end{document}
