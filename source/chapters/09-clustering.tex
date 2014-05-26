@@ -1,3 +1,4 @@
+%!TEX root = /Users/andrea/Unive/Specialistica/Artificial Intelligence/Mod. A/Dispensa/main.tex
 \chapter{Clustering} % (fold)
 \label{cha:clustering}
 
@@ -15,14 +16,14 @@ Il criterio di similarità che deve essere fornito per poter fare un clustering 
 	\caption{Esempio di clustering}\label{fig:clusters}
 \end{figure}
 
-In questo esempio è possibile identificare quattro cluster nei quali possono essere suddivisi i dati e il criterio di similarità usato è la \emph{distanza}, quindi due oggetti fanno parte di uno stesso cluster solo se sono sufficientemente vicini tra di loro. 
+In questo esempio è possibile identificare tre cluster nei quali possono essere suddivisi i dati e il criterio di similarità usato è la \emph{distanza}, quindi due oggetti fanno parte di uno stesso cluster solo se sono sufficientemente vicini tra di loro. 
 
 \newpage
 
 Questo tipo di clustering è detto \emph{distance-based}, ovvero basato sulla distanza. In generale, a seconda del tipo di input il problema del partizionamento si divide in:
 \begin{enumerate}
 	\item \textbf{feature-based:} gli oggetti sono rappresentati come vettori di caratteristiche. Nella letteratura l'algoritmo più noto è il \emph{k-means};
-	\item \textbf{pairwise:} è sufficiente solo una matrice di similarità tra tutte le coppie di oggetti; non è necessario avere la rappresentazione vettoriale degli oggetti, si tratta quindi di un approccio più generale rispetto al primo. Una degli algoritmi più popolari è il \emph{normalized cut (ncut)}. 
+	\item \textbf{pairwise:} le proprietà degli oggetti sono meglio descritte in termini di \emph{similarità/dissimilarità} tra di essi. In questo caso l'input è determinato da una matrice di affinità che indica la similarità tra tutte le coppie di oggetti. Si tratta quindi di un approccio più generale rispetto al primo.
 \end{enumerate}
 
 Non sempre è facile ed intuitivo trovare un raggruppamento per i dati, come invece lo era per l’esempio visto, in quanto è difficile stabilire cosa costituisce un “buon clustering” e cosa no. In generale si può affermare che un cluster deve soddisfare i seguenti criteri:
@@ -31,7 +32,7 @@ Non sempre è facile ed intuitivo trovare un raggruppamento per i dati, come inv
 	\item \textbf{criterio esterno}: tutti gli oggetti all'\emph{esterno} di un cluster devono essre il più possibile dissimili rispetto a quelli contenuti al suo interno.
 \end{itemize}
 
-Nelle sezioni seguenti saranno presentati tre metodi di clustering:  K-Means, N-Cut e insiemi dominanti. Il primo è di tipo feature-based, mentre i rimanenti sono entrambi di tipo pairwise, ma utilizzano tecniche differenti. In particolare N-Cut è basato sulla teoria spettrale dei grafi, mentre gli insiemi dominanti utilizzano metodi della teoria dei giochi per affrontare il problema.
+Nelle sezioni seguenti saranno presentati tre metodi di clustering:  K-Means, N-Cut e insiemi dominanti. Il primo è di tipo feature-based, mentre i rimanenti sono entrambi di tipo pairwise, ma utilizzano tecniche differenti.
 
 \newpage
 
@@ -106,10 +107,10 @@ L'algoritmo \emph{normalized cut} “taglia” l'immagine utilizzando tecniche d
 	
 	\item Utilizzando il segno nel secondo autovettore più piccolo (il primo è un vettore nullo) si segmenta l'immagine in due parti.
 
-	\item La procedura si ripete ricorsivamente su ciascun segmento dell'immagine per $n$ volte.
+	\item La procedura si ripete ricorsivamente fino a quando si ottiene il numero desideerato di segmenti.
 \end{enumerate}
 
-L'algoritmo nella pratica si è dimostrato abbastanza efficace tuttavia il calcolo degli autovettori è un problema computazionalmente costoso: $O(n^3)$ dove $n$ è il numero di pixel. L'algoritmo diventa quindi impraticabile per immagini di dimensioni eccessive.\\
+L'algoritmo nella pratica si è dimostrato abbastanza efficace tuttavia il calcolo degli autovettori è un problema computazionalmente costoso: $O(n^3)$ dove $n$ è il numero di pixel. Tuttavia è possibile velocizzare l'algoritmo sfruttando il fatto che la matrice è sparsa (i valori sono quasi tutti pari a zero) ed abbassare la complessità a $O(n \sqrt{n})$\\
 
 \begin{figure}[h!]
     \centering
@@ -129,218 +130,15 @@ L'algoritmo nella pratica si è dimostrato abbastanza efficace tuttavia il calco
 
 \newpage
 
+
 \section{Insiemi dominanti} % (fold)
 
-Prima di presentare il concetto di insieme dominante è necessario introdurre il \emph{problema della cricca massima}. Si vedrà, infatti, che un insieme dominante non è altro che una \textbf{clique massimale} di un grafo.
+Il concetto di insieme dominante nasce dallo studio sulla formulazione continua del 
+problema della cricca massima (vedi Sezione~\ref{sec:problema_della_cricca_massima}). Non è altro che la definizione di cluster dal punto di vista della teoria dei grafi.\\
 
-\subsection{Problema della cricca massima} % (fold)
-\label{ssec:problema_della_cricca_massima}
-Sia $G=(V,E)$ un grafo non orientato con $V$ l'insieme dei vertici ed $E$ quello degli archi, tale per cui $V={1,\dots,n}$ e $E \subseteq V \times V$. Si definisce cricca (o clique) $C \subseteq V$, un sottoinsieme di vertici di G che formano un grafo completo, ovvero tale che $\forall i,j \in C$ con $i \neq j, (i,j) \in E$.
+In questo contesto i dati sono, dunque, rappresentati da un grafo indiretto $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E\subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva. I vertici rappresentato i datapoints, gli archi le relazioni tra essi e i pesi rispecchiano la similarità tra coppie di vertici connessi.\\
 
-\begin{mydef}[Clique massimale]
-Si definisce \textbf{clique massimale} di $G$ una clique di $G$ che non è contenuta in nessun'altra clique di $G$.    
-\end{mydef}
-
-\begin{mydef}[Clique massima]
-    Si definisce \textbf{clique massima} di $G$ una clique massimale di G di cardinalità massima.
-\end{mydef}
-Il problema consiste nel trovare una cricca massimale (MCP). Ad esempio si consideri il seguente grafo:
-
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}
-        \node[circle,fill=blue!20] (1) at (0,2) {1};
-        \node[circle,fill=blue!20] (2) at (-2,0) {2};
-        \node[circle,fill=blue!20] (3) at (2,0) {3};
-        \node[circle,fill=blue!20] (4) at (0, -2) {4};
-    
-        \foreach \from / \to in {1/2,2/3,1/3,3/4}
-            \path (\from) edge (\to);
-    \end{tikzpicture}
-    \caption{Un grafo non orientato.}\label{fig:graph1}
-\end{figure}
-Le clique nel grafo sono:
-\begin{align*}
-    C_1 &= \{1,2\} \tag{$C_1$ non è massimale perché $C_1 \subseteq C_2$}\\
-    C_2 &= \{1,2,3\} \tag{Massimale e massima}\\
-    C_3 &= \{3,4\} \tag{Massimale}
-\end{align*}
-
-\newpage
-
-Trovare la cricca massimale è un problema facile, mentre trovare quella massima è NP-difficile, così come trovare la dimensione di tale clique. In questa sezione si affronta il problema sotto quest'ultimo punto di vista.\\
-
-Per affrontare il problema con le reti neurali è necessario trasformare MCP da problema discreto a problema continuo. Nell'esempio del TSP con il modello di Hopfield, non è detto che ci sia il percorso inverso (potremo ottenere ad esempio una matrice che non ha significato); in questo nuovo problema MCP, la bidirezionalità è d'obbligo.\\
-
-Si utilizza quindi un nuovo approccio, ma prima sono necessarie alcune notazioni:
-\begin{itemize}
-    \item Se $C \subseteq V$, $x^C$ indica il \textbf{vettore caratteristico} definito come:
-    \begin{align*}
-        x^C_i = 
-        \begin{cases}
-            \displaystyle\frac{1}{|C|}, &\text{se }i \in C\\
-            0,  &\text {altrimenti}
-        \end{cases}
-    \end{align*}
-    dove $|C|$ indica la cardinalità dell'insieme $C$ e $i \in \{ 1, \dots, |V|\}$
-    \item $S_n$ è il \textbf{simplesso standard} in $\mathbb{R}^n$:
-    \begin{align*}
-        S_n = \left\{x \in \mathbb{R}^n : \sum_{i=1}^n x_i = 1 \text{ e } x_i \geq 0, \forall i \right\}
-    \end{align*}
-    Per qualunque vettore caratteristico vale la relazione $x^C \in S_n$ con $n \geq |C|$
-    \item $A=(a_{ij})$ è la matrice di adiacenza di $G$:
-    \begin{align*}
-        a_{ij} =
-        \begin{cases}
-            1, &\text{ se } (i,j) \in E \\
-            0, &\text{ altrimenti}
-        \end{cases}
-    \end{align*}
-\end{itemize}
-
-
-\newpage
-
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}[scale=2]
-
-        %draw the main coordinate system axes
-        \draw[thick,->] (0,0,0) -- (2,0,0) node[anchor=north east]{$x$};
-        \draw[thick,->] (0,0,0) -- (0,2,0) node[anchor=north west]{$y$};
-        \draw[thick,->] (0,0,0) -- (0,0,2) node[anchor=south]{$z$};
-        
-        \draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
-        
-        \node at (1.1,0.1,0) {1};
-        \node at (0.1,1.1,0) {1};
-        \node at (0,0.1,1.1) {1};
-        
-    \end{tikzpicture}
-    \caption{Rappresentazione grafica del simplesso standard}
-\end{figure}
-
-Si consideri la seguente funzione quadratica continua in $n$ variabili:
-\begin{align*}
-    &f_G(x) = x^T A x = \sum_{i=1}^n \sum_{j=1}^n a_{ij} x_i x_j \tag{Lagrangiano del grafo} \\
-    &\text{oppure } f_G(\bar{x}) = \sum_{(i,j) \in E} x_i x_j
-\end{align*}
-dove $x^T$ è il vettore trasposto e $A$ è la matrice di adiacenza. Ad esempio se si considera il grafo in Figura~\ref{fig:graph1} allora:
-\begin{align*}
-    f_G(x) = x_1 x_2 + x_1 x_3 + x_2 x_3 + x_3 x_4
-\end{align*}
-
-\subsubsection{Teorema di Motzkin-Strauss} % (fold)
-Si è detto che per affrontare MCP con le reti neurali è necessario fornire una formulazione continua del problema. A tale scopo si introduce il teorema di Motzkin-Strauss.
-\begin{thm}[Teorema di Motzkin-Strauss]
-    Sia $x^*$ un massimo globale di $f_G$ in $x \in S_n$ allora la cardinalità della clique massima è legata a $f_G(x)$  dalla seguente formula:
-    \begin{align*}
-           \omega(G) = \frac{1}{1 - f(x^*)}
-    \end{align*}
-    Inoltre un sottoinsieme di vertici $C$ è una clique massima se e solo se il suo vettore caratteristico $x^C \in S_n$ è un massimo globale per $f_G$ in $S_n$.
-\end{thm} 
-\newpage
-
-Il teorema di Motzkin-Strauss fornisce una connessione tra la cardinalità della clique massima $\omega(G)$ di un grafo $G$ con $n$ vertici e il massimo del suo Lagrangiano definito nel simplesso standard di $\mathbb{R}^n$. In particolare è stato mostrato che una clique $C$ è massima se e solo se il suo vettore caratteristico $x^C$ è un massimizzatore globale della funzione $f_G$ su $S_n$.\\
-
-Tuttavia non tutti i massimizzatori di $f_G$ sono nella forma di vettori caratteristici e pertanto non possono essere utilizzati direttamente per ricavare informazioni sulle clique massime. Tali massimizzatori sono definiti \emph{soluzioni spurie}. Ad esempio, si consideri il seguente grafo:
-
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}
-        \node[circle,fill=blue!20] (1) at (0,1.5) {1};
-        \node[circle,fill=blue!20] (2) at (-1.5,0) {2};
-        \node[circle,fill=blue!20] (3) at (1.5,0) {3};
-        
-        \draw (1) -- (2);
-        \draw (1) -- (3);
-        
-    \end{tikzpicture}
-    \caption{Grafo esempio.}
-\end{figure}
- Il grafo presenta due massimi globali:
- \begin{align*}
-     C_1 = \{1,2\} \qquad  x^{C_1} = (1 / 2, 1 / 2, 0) \\
-     C_2 = \{1,3 \} \qquad x^{C_2} = (1 / 2, 0, 1 / 2)
- \end{align*}
-
-Tuttavia come si evince dal seguente grafico, sono massimi globali anche tutti i punti del segmento $x'x''$ ovvero tutti i punti in $(1/2, \alpha / 2, (1 - \alpha) / 2) \, \forall \alpha \in [0,1]$.
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}[scale=2]
-        %draw the main coordinate system axes
-        \draw[thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
-        \draw[thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
-        \draw[thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
-        
-        \draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
-        \draw[color=blue, very thick] (.5, .5, 0) -- (0,.5,.5);
-        
-        \node at (.5,.6,0) {$x'$};
-        \node at (0,.6,.5) {$x''$};
-        
-        \node at (1.1,0.1,0) {1};
-        \node at (0.1,1.1,0) {1};
-        \node at (0,0.1,1.1) {1};
-        
-    \end{tikzpicture}
-    \caption{Soluzioni spurie in MCP}
-\end{figure}
-
-Dunque $x'$ e $x''$ \textbf{non} sono vettori caratteristici e non possono essere utilizzati per la soluzione del MCP.
-
-\newpage
-
-Quello che è stato fatto finora è prendere il problema $P$ di clique massima nel discreto e trasformarlo in un problema $P'$ di ottimizzazione quadratica nel continuo. A questo punto è necessario mappare la soluzione del problema $P'$ in una soluzione del problema originale $P$.  Questo è possibile se la soluzione ottenuta in $P'$ è un vettore caratteristico.\\
-
-Il problema delle soluzioni spurie è stato recentemente risolto da Bomze (1995) proponendo una versione regolarizzata di $f_G(x)$. La soluzione consiste nel sommare $1/2$ alla diagonale principale della matrice di adiacenza $A$.
-\begin{align*}
-    A' = A + \frac{1}{2} I
-\end{align*}
-Da cui si ottiene:
-\begin{align*}
-    \hat{f}_G(x) = x^T A' x = x^T \left( A + \frac{1}{2} I \right) x 
-\end{align*}
-Dove I è la matrice identità, ovvero una matrice quadrata dello stesso lato di $A$ con tutti gli elementi in diagonale principale ad 1 e tutti gli elementi al di fuori di essa a 0.\\
-
-
-\begin{figure}[h!]
-    \centering
-    \begin{tikzpicture}
-        \node[circle,fill=blue!20] (1) at (0,1.5) {1};
-        \node[circle,fill=blue!20] (2) at (-1.5,0) {2};
-        \node[circle,fill=blue!20] (3) at (1.5,0) {3};
-        
-        \path
-		(1) edge (2)
-		(1) edge (3)
-		(1) edge[loop above] node{$1/2$} (1)
-		(2) edge[loop left] node{$1/2$} (2)
-		(3) edge[loop right] node{$1/2$} (3)
-		;
-        
-    \end{tikzpicture}
-    \caption{Soluzione problema delle soluzioni spurie (Bomze).}
-\end{figure}
-
-Riassumendo il problema della cricca massima dato un grafo $G = (V, E)$ è definito nel seguente modo:
-\begin{align*}
-	\max(\hat{f}_G(x)) \text{ tale che } x \in S_n
-\end{align*}
-Sia $C \subseteq V$ e sia $x^C$ il suo vettore caratteristico allora:
-\begin{enumerate}
-	\item $C$ è una clique massima di $G$ sse $x^C$ è un massimo globale di $\hat{f} \in S_n$;
-	\item $C$ è una clique massimale di $G$ sse $x^C$ è un massimo locale di $\hat{f} \in S_n$;
-	\item ogni massimo locale è un vettore caratteristico ed è locale stretto. 
-\end{enumerate}
-
-% subsection problema_della_cricca_massima (end)
-
-
-\label{subsec:Definizione di insieme dominante}
-Dato un grafo pesato indiretto $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E \subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva.\\
-
-Il grafo è rappresentato con la sua matrice di adiacenza pesata $A$, che è la matrice simmetrica $n \times n$ dove $A = a_{ij}$ è definito nel seguente modo:
+Come di consueto, il grafo è rappresentato con la sua matrice di adiacenza pesata $A$, che è la matrice simmetrica $n \times n$ dove $A = a_{ij}$ è definito nel seguente modo:
 \begin{align*}
 	a_{ij} =
 	\begin{cases}
@@ -349,32 +147,33 @@ Il grafo è rappresentato con la sua matrice di adiacenza pesata $A$, che è la 
 	\end{cases}
 \end{align*}
 
-In questo contesto un cluster corrisponde a una \textbf{clique massimale}. Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si introduce il concetto di \textbf{grado pesato medio} di $i$ rispetto ad $S$ definito come:
-\begin{align*}
-	awdeg_S(i) = \frac{1}{|S|}\sum_{j \in S} a_{ij}
-\end{align*}
-E nel caso in cui $j \not\in S$:
-\begin{align*}
-	\phi_S(i,j) = a_{ij} - awdeg_S(i)
-\end{align*}
+Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si introduce il concetto di \textbf{grado pesato medio} di $i$ rispetto ad $S$ definito come:\\
+
+\begin{minipage}{.5\textwidth}
+	\begin{align*}
+		awdeg_S(i) = \frac{1}{|S|}\sum_{j \in S} a_{ij}
+	\end{align*}
+	E nel caso in cui $j \not\in S$:
+	\begin{align*}
+		\phi_S(i,j) = a_{ij} - awdeg_S(i)
+	\end{align*}
+\end{minipage}
+\begin{minipage}{.5\textwidth}
+ 	\begin{tikzpicture}[node distance=2cm]
+ 		\fill [gray!20] (-1, 0) ellipse  (2cm and 3cm);
+ 		\node at (-1, 3.4) {$S$};
+ 	    \node[Node] (1) at (0,0) {$i$};
+ 	    \node[Node, left of=1] (2) {};
+ 	    \node[Node, above of=2] (3) {};
+ 	    \node[Node, below of=2] (4) {};
+ 	    \node[Node, right=2cm of 1] (0) {$j$};
+ 	    \path
+ 		(1) edge (2) edge (3) edge (4) edge[above] node{$a_{ij}$} (0)
+ 		;
+ 	\end{tikzpicture}\\
+\end{minipage}
+
 Intuitivamente $\phi_S(i, j)$ misura la similarità tra il nodo $j$ e il nodo $i$ rispetto alla similarità media tra il nodo $i$ e i suoi vicini in $S$
-
-\begin{figure}[h!]
-    \centering
-
-	\begin{tikzpicture}[node distance=2cm]
-		\fill [gray!20] (-1, 0) ellipse  (2cm and 3cm);
-		\node at (-1, 3.4) {$S$};
-	    \node[Node] (1) at (0,0) {$i$};
-	    \node[Node, left of=1] (2) {};
-	    \node[Node, above of=2] (3) {};
-	    \node[Node, below of=2] (4) {};
-	    \node[Node, right=2cm of 1] (0) {$j$};
-	    \path
-		(1) edge (2) edge (3) edge (4) edge[above] node{$a_{ij}$} (0)
-		;
-	\end{tikzpicture}
-\end{figure}
 
 \newpage
 
@@ -455,7 +254,7 @@ Intuitivamente $w_S(i)$ ci dà la misura di similarità complessiva tra il nodo 
 È stata dunque definita una misura che descrive cosa comporta (in termini di similarità) l'aggiunta o la rimozione di un nodo. Questo porta alla definizione di \emph{insiemi dominanti}.
 
 \begin{mydef}[Insieme Dominante]
-	Un sottoinsieme di vertici non vuoto $V \subseteq V$ tale che $W(T) > 0$ per ogni insieme non vuoto $T \subseteq S$ è detto \textbf{dominante} se:
+	Un sottoinsieme di vertici non vuoto $S \subseteq V$ tale che $W(T) > 0$ per ogni insieme non vuoto $T \subseteq S$ è detto \textbf{dominante} se:
 	\begin{enumerate}
 		\item $W_S(i) > 0, \forall i \in S$ (omogeneità interna)
 		\item $W_{S \cup \{i\}}(i) < 0, \forall i \not\in S$ (disomogeneità esterna)
@@ -494,15 +293,68 @@ L'insieme dominante è dunque un insieme di vertici massimalmente coesi tra loro
     \end{tikzpicture}
 	\caption{L'insieme $\{1,3,5\}$ è dominante.}
 \end{figure}
-Questa nuova formulazione di cluster è stata concepita per poter sfruttare tecniche sulla teoria dei giochi. Il ponte che collega gli insiemi dominanti con la teoria dei giochi è dato dal seguente teorema:
+
+Quando la matrice di affinità è binaria 0/1 allora l'insieme dominante coincide con la cricca massimale (stretta) in un grafo (vedi Sezione~\ref{sec:problema_della_cricca_massima}).\\
+
+\newpage
+
+\subsection{Insiemi dominanti e ottimi locali} % (fold)
+\label{sub:insiemi_dominanti_e_ottimi_locali}
+Ci si concentra ora su come trovare l'insieme dominante attraverso tecniche di ottimizzazione.
+Sia $G = (V, E, w)$ un grafo pesato e sia $A$ la matrice di adiacenza. Si consideri il seguente Standard Quadratic Program (StQP).
+\begin{align*}
+	&\text{maximize } f(x) = x^T A x\\
+	&\text{subject to } x \in \Delta
+\end{align*}
+dove $\Delta$ è il simplesso standard su $R^n$. Si introduce il seguente teorema:
+
+\begin{thm}
+	Se $S$ è un sottoinsieme dominante di vertici, allora il suo vettore caratteristico pesato $x^S$ definito come:
+	\begin{align*}
+		x^S_i = 
+		\begin{cases}
+			\frac{W_S(i)}{W(S)}, &\text{ se }i \in S\\
+			0 &\text{ altrimenti}
+		\end{cases}
+	\end{align*}
+	è un massimizzatore locale stretto di $f$ in $\Delta$.
+	
+	Al contrario se $x^*$ è un massimizzatore locale stretto di $f$ in $\Delta$ allora il suo supporto:
+	\begin{align*}
+		\sigma = \sigma(x^*) = \{ i \in V : x^*_i \neq 0 \}
+	\end{align*}
+	è un insieme dominante a condizione che $W_{\sigma \cup \{i\}} \neq 0$ per ogni $i \not\in \sigma$. 
+\end{thm}
+
+Si tratta di una generalizzazione del teorema di Motzkin Strauss.\\
+
+Ora che è stata fornita una caratterizzazione di insieme dominante è possibile utilizzare una qualunque tecnica di ottimizzazione quadratica per risolvere il problema (ad esempio la discesa del gradiente). Tuttavia le dinamiche di replicazione (vedi Sezione~\ref{sec:teoria_dei_giochi_evoluzionistici}) si sono rivelate particolarmente adatte per affrontare questo problema. È stato infatti dimostrato il seguente teorema:
 
 \begin{thm}[Torsello, Rota Bulò, Pelillo 2006]
 	Strategie evolutionary stable (ESS) di un problema di clustering con matrice di affinità $A$ sono in corrispondenza uno-a-uno con gli insiemi dominanti.
 \end{thm}
 
-Si tratta di una generalizzazione del teorema di Motzkin-Strauss.
+\newpage
 
-% subsection definizione_insieme_dominante (end)
+Quindi sia $A$ la matrice di adiacenza del grafo di similarità. Si pone:
+\begin{align*}
+	W = A (= W^T \geq 0)
+\end{align*}
+Allora un sistema di replicazione con matrice di payoff $W$ partendo da uno stato iniziale arbitrario convergerà, per il principio di selezione naturale, a un massimizzatore della funzione $f(x) = x^T A x$ nel simplesso standard. Questo corrisponderà a un insieme dominante in un grafo, ovvero ad un cluster di vertici.\\
+
+La teoria dei giochi evoluzionistici opera in uno scenario in cui coppie di individui sono scelti ripetutamente a caso da una grande popolazione per competere in un gioco a due giocatori. A differenza della teoria dei giochi classica, i giocatori non si comportano razionalmente ma sono pre-programmati a un certo pattern comportamentale o una strategia mista. Col passare del tempo il principio di selezione naturale inciderà sulla distribuzione dei comportamenti.\\
+
+Ad esempio si supponga di volere separare lo sfondo in un'immagine dagli elementi in primo piano. Nel gioco evoluzionistico ogni giocatore è pre-programmato a selezionare con una certa probabilità un elemento (un pixel) dall'immagine. In questo contesto la selezione naturale porterà giocatori che adottano strategie migliori (payoff più alto) ad espandersi, mentre quelli che adottano strategie peggiori ad estinguirsi. Nel caso descritto, ci si aspetta che la selezione naturale porti all'estinzione i giocatori che selezionano lo sfondo, per poi convergere a una popolazione che seleziona solo gli elementi in primo piano.\\
+
+Concludendo le caratteristiche principali che rendono questo approccio preferibile rispetto ad altri sono le seguenti:
+\begin{enumerate}
+	\item Non richiede alcuna rappresentazione dei dati ovvero che gli elementi debbano essere rappresentato come punti in uno spazio vettoriale;
+	\item assenza di assunzioni circa la struttura della matrice di affinità: è stato dimostrato che l'approccio funziona anche nel caso di funzioni di similarità asimmetriche o negative;
+	\item non è necessaria alcuna conoscenza a priori circa il numero di clusters;
+	\item permette l'estrazione di cluster sovrapposti.
+\end{enumerate}
+
+% subsection insiemi_dominanti_e_ottimi_locali (end)
 % section insiemi_dominanti (end)
 % chapter clustering (end)
 

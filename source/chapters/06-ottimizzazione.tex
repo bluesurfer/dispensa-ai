@@ -292,4 +292,212 @@ Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La mat
 
 \newpage
 
+\section{Problema della cricca massima} % (fold)
+\label{sec:problema_della_cricca_massima}
+
+Sia $G=(V,E)$ un grafo non orientato con $V$ l'insieme dei vertici ed $E$ quello degli archi, tale per cui $V={1,\dots,n}$ e $E \subseteq V \times V$. Si definisce cricca (o clique) $C \subseteq V$, un sottoinsieme di vertici di G mutuamente adiacenti (che formano un grafo completo), ovvero tali che $\forall i,j \in C$ con $i \neq j, (i,j) \in E$.
+
+\begin{mydef}[Clique massimale]
+Si definisce \textbf{clique massimale} di $G$ una clique di $G$ che non è contenuta in nessun'altra clique di $G$.    
+\end{mydef}
+
+\begin{mydef}[Clique massima]
+    Si definisce \textbf{clique massima} di $G$ una clique massimale di G di cardinalità massima.
+\end{mydef}
+Il problema consiste nel trovare una cricca massimale (MCP). Ad esempio si consideri il seguente grafo:
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \node[circle,fill=blue!20] (1) at (0,2) {1};
+        \node[circle,fill=blue!20] (2) at (-2,0) {2};
+        \node[circle,fill=blue!20] (3) at (2,0) {3};
+        \node[circle,fill=blue!20] (4) at (0, -2) {4};
+    
+        \foreach \from / \to in {1/2,2/3,1/3,3/4}
+            \path (\from) edge (\to);
+    \end{tikzpicture}
+    \caption{Un grafo non orientato.}\label{fig:graph1}
+\end{figure}
+Le clique nel grafo sono:
+\begin{align*}
+    C_1 &= \{1,2\} \tag{$C_1$ non è massimale perché $C_1 \subseteq C_2$}\\
+    C_2 &= \{1,2,3\} \tag{Massimale e massima}\\
+    C_3 &= \{3,4\} \tag{Massimale}
+\end{align*}
+
+\newpage
+
+Trovare la cricca massimale è un problema facile, mentre trovare quella massima è NP-difficile, così come trovare la dimensione di tale clique. In questa sezione si affronta il problema sotto quest'ultimo punto di vista.
+
+\subsection{Formulazione continua di MCP} % (fold)
+Per affrontare il problema con le reti neurali è necessario trasformare MCP da problema discreto a problema continuo. Nell'esempio del TSP con il modello di Hopfield, non è detto che ci sia il percorso inverso (potremo ottenere ad esempio una matrice che non ha significato); in questo nuovo problema MCP, la bidirezionalità è d'obbligo.\\
+
+Si utilizza quindi un nuovo approccio, ma prima sono necessarie alcune notazioni:
+\begin{itemize}
+    \item Se $C \subseteq V$, $x^C$ indica il \textbf{vettore caratteristico} definito come:
+    \begin{align*}
+        x^C_i = 
+        \begin{cases}
+            \displaystyle\frac{1}{|C|}, &\text{se }i \in C\\
+            0,  &\text {altrimenti}
+        \end{cases}
+    \end{align*}
+    dove $|C|$ indica la cardinalità dell'insieme $C$ e $i \in \{ 1, \dots, |V|\}$
+    \item $S_n$ è il \textbf{simplesso standard} in $\mathbb{R}^n$:
+    \begin{align*}
+        S_n = \left\{x \in \mathbb{R}^n : \sum_{i=1}^n x_i = 1 \text{ e } x_i \geq 0, \forall i \right\}
+    \end{align*}
+    Per qualunque vettore caratteristico vale la relazione $x^C \in S_n$ con $n \geq |C|$
+    \item $A=(a_{ij})$ è la matrice di adiacenza di $G$:
+    \begin{align*}
+        a_{ij} =
+        \begin{cases}
+            1, &\text{ se } (i,j) \in E \\
+            0, &\text{ altrimenti}
+        \end{cases}
+    \end{align*}
+\end{itemize}
+
+\newpage
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=2]
+
+        %draw the main coordinate system axes
+        \draw[thick,->] (0,0,0) -- (2,0,0) node[anchor=north east]{$x$};
+        \draw[thick,->] (0,0,0) -- (0,2,0) node[anchor=north west]{$y$};
+        \draw[thick,->] (0,0,0) -- (0,0,2) node[anchor=south]{$z$};
+        
+        \draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
+        
+        \node at (1.1,0.1,0) {1};
+        \node at (0.1,1.1,0) {1};
+        \node at (0,0.1,1.1) {1};
+        
+    \end{tikzpicture}
+    \caption{Rappresentazione grafica del simplesso standard}
+\end{figure}
+
+Si consideri la seguente funzione quadratica continua in $n$ variabili:
+\begin{align*}
+    &f_G(x) = x^T A x = \sum_{i=1}^n \sum_{j=1}^n a_{ij} x_i x_j \tag{Lagrangiano del grafo} \\
+    &\text{oppure } f_G(\bar{x}) = \sum_{(i,j) \in E} x_i x_j
+\end{align*}
+dove $x^T$ è il vettore trasposto e $A$ è la matrice di adiacenza. Ad esempio se si considera il grafo in Figura~\ref{fig:graph1} allora:
+\begin{align*}
+    f_G(x) = x_1 x_2 + x_1 x_3 + x_2 x_3 + x_3 x_4
+\end{align*}
+
+È stata dunque definita una funzione continua che rappresenta il problema: il Lagrangiano del grafo. A questo punto l'approccio tipico per risolvere MCP è quello di costruire un sistema dinamico che converga ai massimi di tale funzione. Questi punti corrisponderanno alle soluzioni nello spazio discreto del problema originale. A tale scopo si introduce il teorema di Motzkin-Strauss.
+\begin{thm}[Teorema di Motzkin-Strauss]
+    Sia $x^*$ un massimo globale di $f_G$ in $x \in S_n$ allora la cardinalità della clique massima è legata a $f_G(x)$  dalla seguente formula:
+    \begin{align*}
+           \omega(G) = \frac{1}{1 - f(x^*)}
+    \end{align*}
+    Inoltre un sottoinsieme di vertici $C$ è una clique massima se e solo se il suo vettore caratteristico $x^C \in S_n$ è un massimo globale per $f_G$ in $S_n$.
+\end{thm} 
+\newpage
+
+Il teorema di Motzkin-Strauss fornisce una connessione tra la cardinalità della clique massima $\omega(G)$ di un grafo $G$ con $n$ vertici e il massimo del suo Lagrangiano definito nel simplesso standard di $\mathbb{R}^n$. In particolare è stato mostrato che una clique $C$ è massima se e solo se il suo vettore caratteristico $x^C$ è un massimizzatore globale della funzione $f_G$ su $S_n$.\\
+
+Tuttavia non tutti i massimizzatori di $f_G$ sono nella forma di vettori caratteristici e pertanto non possono essere utilizzati direttamente per ricavare informazioni sulle clique massime. Tali massimizzatori sono definiti \emph{soluzioni spurie}. Ad esempio, si consideri il seguente grafo:
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \node[circle,fill=blue!20] (1) at (0,1.5) {1};
+        \node[circle,fill=blue!20] (2) at (-1.5,0) {2};
+        \node[circle,fill=blue!20] (3) at (1.5,0) {3};
+        
+        \draw (1) -- (2);
+        \draw (1) -- (3);
+        
+    \end{tikzpicture}
+    \caption{Grafo esempio.}
+\end{figure}
+ Il grafo presenta due massimi globali:
+ \begin{align*}
+     C_1 = \{1,2\} \qquad  x^{C_1} = (1 / 2, 1 / 2, 0) \\
+     C_2 = \{1,3 \} \qquad x^{C_2} = (1 / 2, 0, 1 / 2)
+ \end{align*}
+
+Tuttavia come si evince dal seguente grafico, sono massimi globali anche tutti i punti del segmento $x'x''$ ovvero tutti i punti in $(1/2, \alpha / 2, (1 - \alpha) / 2) \, \forall \alpha \in [0,1]$.
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=2]
+        %draw the main coordinate system axes
+        \draw[thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
+        \draw[thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
+        \draw[thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
+        
+        \draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
+        \draw[color=blue, very thick] (.5, .5, 0) -- (0,.5,.5);
+        
+        \node at (.5,.6,0) {$x'$};
+        \node at (0,.6,.5) {$x''$};
+        
+        \node at (1.1,0.1,0) {1};
+        \node at (0.1,1.1,0) {1};
+        \node at (0,0.1,1.1) {1};
+        
+    \end{tikzpicture}
+    \caption{Soluzioni spurie in MCP}
+\end{figure}
+
+Dunque $x'$ e $x''$ \textbf{non} sono vettori caratteristici e non possono essere utilizzati per la soluzione del MCP.
+
+\newpage
+
+Quello che è stato fatto finora è prendere il problema $P$ di clique massima nel discreto e trasformarlo in un problema $P'$ di ottimizzazione quadratica nel continuo. A questo punto è necessario mappare la soluzione del problema $P'$ in una soluzione del problema originale $P$.  Questo è possibile se la soluzione ottenuta in $P'$ è un vettore caratteristico.\\
+
+Il problema delle soluzioni spurie è stato recentemente risolto da Bomze (1995) proponendo una versione regolarizzata di $f_G(x)$. La soluzione consiste nel sommare $1/2$ alla diagonale principale della matrice di adiacenza $A$.
+\begin{align*}
+    A' = A + \frac{1}{2} I
+\end{align*}
+Da cui si ottiene:
+\begin{align*}
+    \hat{f}_G(x) = x^T A' x = x^T \left( A + \frac{1}{2} I \right) x 
+\end{align*}
+Dove I è la matrice identità, ovvero una matrice quadrata dello stesso lato di $A$ con tutti gli elementi in diagonale principale ad 1 e tutti gli elementi al di fuori di essa a 0.\\
+
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \node[circle,fill=blue!20] (1) at (0,1.5) {1};
+        \node[circle,fill=blue!20] (2) at (-1.5,0) {2};
+        \node[circle,fill=blue!20] (3) at (1.5,0) {3};
+        
+        \path
+		(1) edge (2)
+		(1) edge (3)
+		(1) edge[loop above] node{$1/2$} (1)
+		(2) edge[loop left] node{$1/2$} (2)
+		(3) edge[loop right] node{$1/2$} (3)
+		;
+        
+    \end{tikzpicture}
+    \caption{Soluzione problema delle soluzioni spurie (Bomze).}
+\end{figure}
+
+Riassumendo il problema della cricca massima dato un grafo $G = (V, E)$ è definito nel seguente modo:
+\begin{align*}
+	\max(\hat{f}_G(x)) \text{ tale che } x \in S_n
+\end{align*}
+Sia $C \subseteq V$ e sia $x^C$ il suo vettore caratteristico allora:
+\begin{enumerate}
+	\item $C$ è una clique massima di $G$ sse $x^C$ è un massimo globale di $\hat{f} \in S_n$;
+	\item $C$ è una clique massimale di $G$ sse $x^C$ è un massimo locale di $\hat{f} \in S_n$;
+	\item ogni massimo locale è un vettore caratteristico ed è locale stretto. 
+\end{enumerate}
+
+\newpage
+
+Il risultato precedente garantisce che \emph{tutti} i massimizzatori di $\hat{f}$ su $S_n$ sono stretti, e sono sono vettori caratteristici di clique massima/massimale in un grafo. In particolare esiste una corrispondenza uno-a-uno da una parte tra le clique massimali e massimizzatori locali di $\hat{f}$ su $S_n$, dall'altra tra clique massima e massimizzatore globale.
+
+% section problema_della_cricca_massima (end)
+
+
 % chapter ottimizzazione_con_le_reti_neurali (end)

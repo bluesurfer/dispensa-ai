@@ -128,9 +128,13 @@ Il gioco non ammette equilibri di Nash basati su strategie pure. Tuttavia, se si
 \label{sub:giochi_doppiamente_simmetrici_ed_equilibri_ess}
 
 Un gioco $G= (I, \Theta, u)$ a due giocatori è detto doppiamente simmetrico se oltre ad essere simmetrico $u(\mathbf{x}, \mathbf{y}) = u(\mathbf{y}, \mathbf{x}) \quad \forall(\mathbf{x}, \mathbf{y}) \in \Theta$.\\
-Losrt e Akin (1983) mostrarono che il teorema fondamentale di selezione naturale\footnote{Il teorema fondamentale di selezione naturale afferma che se c'è selezione naturale, il payoff medio di una popolazione tende ad aumentare} si applica a tutti i giochi doppiamente simmetrici. Essi mostrarono che in questi giochi, con le dinamiche di replicazione, il fitness (payoff) medio della popolazione  $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$  cresce lungo tutti i cammini di soluzione non stazionari; formalmente mostrarono che:
+
+Losrt e Akin (1983) mostrarono che il teorema fondamentale di selezione naturale\footnote{Il teorema fondamentale di selezione naturale afferma che se c'è selezione naturale, il payoff medio di una popolazione tende ad aumentare} si applica a tutti i giochi doppiamente simmetrici. Essi mostrarono che, con le dinamiche di replicazione, se $A = A^T$ il fitness (payoff) medio della popolazione  $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$  cresce lungo tutti i cammini di soluzione non stazionari; formalmente mostrarono che:
 \begin{align*}
-    \frac{d}{dt} f(\mathbf{x}(t)) \geq 0 \qquad \forall t \geq 0
+    \frac{d}{dt} f(\mathbf{x}(t)) \geq 0 \qquad \forall t \geq 0 \tag{Caso continuo}
+\end{align*}
+\begin{align*}
+	f(\mathbf{x}(t + 1)) \geq f(\mathbf{x}(t)) \tag{Caso discreto}
 \end{align*}
 con l’uguaglianza sse $\mathbf{x}$ è un punto stazionario.\\
 Come conseguenza di questi risultati si ottiene la seguente caratterizzazione degli stati asintoticamente stabili per i giochi doppiamente simmetrici.
