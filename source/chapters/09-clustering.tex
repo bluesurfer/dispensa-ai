@@ -133,10 +133,9 @@ L'algoritmo nella pratica si è dimostrato abbastanza efficace tuttavia il calco
 
 \section{Insiemi dominanti} % (fold)
 
-Il concetto di insieme dominante nasce dallo studio sulla formulazione continua del 
-problema della cricca massima (vedi Sezione~\ref{sec:problema_della_cricca_massima}). Non è altro che la definizione di cluster dal punto di vista della teoria dei grafi.\\
+Il concetto di insieme dominante nasce dallo studio sulla formulazione continua del problema della cricca massima (vedi Sezione~\ref{sec:problema_della_cricca_massima}). L'insieme dominante, infatti, non è altro che una clique di un grafo nel caso in cui gli archi siano pesati, ovvero insiemi di vertici che hanno alta omogeneità interna e alta disomogeneità verso l'esterno.\\
 
-In questo contesto i dati sono, dunque, rappresentati da un grafo indiretto $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E\subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva. I vertici rappresentato i datapoints, gli archi le relazioni tra essi e i pesi rispecchiano la similarità tra coppie di vertici connessi.\\
+In questo contesto i dati sono, dunque, rappresentati da un grafo non orientato $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E\subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva. I vertici rappresentato i datapoints, gli archi le relazioni tra essi e i pesi rispecchiano la similarità tra coppie di vertici connessi.\\
 
 Come di consueto, il grafo è rappresentato con la sua matrice di adiacenza pesata $A$, che è la matrice simmetrica $n \times n$ dove $A = a_{ij}$ è definito nel seguente modo:
 \begin{align*}
@@ -300,8 +299,9 @@ Quando la matrice di affinità è binaria 0/1 allora l'insieme dominante coincid
 
 \subsection{Insiemi dominanti e ottimi locali} % (fold)
 \label{sub:insiemi_dominanti_e_ottimi_locali}
-Ci si concentra ora su come trovare l'insieme dominante attraverso tecniche di ottimizzazione.
-Sia $G = (V, E, w)$ un grafo pesato e sia $A$ la matrice di adiacenza. Si consideri il seguente Standard Quadratic Program (StQP).
+In questa sezione sarà mostrato come la teoria di Nash possa essere utilizzata per risolvere in modo approssimato la ricerca di insieme dominanti.\\
+
+Dato un grafo pesato $G = (V, E, w)$ e la sua matrice di adiacenza pesata $A$, si consideri il seguente programma quadratico standard:
 \begin{align*}
 	&\text{maximize } f(x) = x^T A x\\
 	&\text{subject to } x \in \Delta
@@ -325,8 +325,7 @@ dove $\Delta$ è il simplesso standard su $R^n$. Si introduce il seguente teorem
 	\end{align*}
 	è un insieme dominante a condizione che $W_{\sigma \cup \{i\}} \neq 0$ per ogni $i \not\in \sigma$. 
 \end{thm}
-
-Si tratta di una generalizzazione del teorema di Motzkin Strauss.\\
+Dove la condizione $W_{\sigma \cup \{i\}} \neq 0$ è un tecnicismo dovuto alla presenza di soluzioni spurie, ovvero soluzioni che non ammettono vettore caratteristico pesato. Si tratta di una generalizzazione del teorema di Motzkin Strauss.\\
 
 Ora che è stata fornita una caratterizzazione di insieme dominante è possibile utilizzare una qualunque tecnica di ottimizzazione quadratica per risolvere il problema (ad esempio la discesa del gradiente). Tuttavia le dinamiche di replicazione (vedi Sezione~\ref{sec:teoria_dei_giochi_evoluzionistici}) si sono rivelate particolarmente adatte per affrontare questo problema. È stato infatti dimostrato il seguente teorema:
 
@@ -340,7 +339,7 @@ Quindi sia $A$ la matrice di adiacenza del grafo di similarità. Si pone:
 \begin{align*}
 	W = A (= W^T \geq 0)
 \end{align*}
-Allora un sistema di replicazione con matrice di payoff $W$ partendo da uno stato iniziale arbitrario convergerà, per il principio di selezione naturale, a un massimizzatore della funzione $f(x) = x^T A x$ nel simplesso standard. Questo corrisponderà a un insieme dominante in un grafo, ovvero ad un cluster di vertici.\\
+Allora un sistema di replicazione con matrice di payoff $W$ partendo da uno stato iniziale arbitrario convergerà, per il principio di selezione naturale, a un massimizzatore della funzione $f(x) = x^T A x$ nel simplesso standard. Questo corrisponderà a un insieme dominante in un grafo, ovvero ad un cluster di vertici. Quindi la ricerca di dominant sets di un grafo pesato e non orientato $G$, corrisponde a trovare equilibri di Nash asintoticamente stabili e le dinamiche di replicazione sono un ottimo strumento a disposizione per perseguire questo scopo.\\
 
 La teoria dei giochi evoluzionistici opera in uno scenario in cui coppie di individui sono scelti ripetutamente a caso da una grande popolazione per competere in un gioco a due giocatori. A differenza della teoria dei giochi classica, i giocatori non si comportano razionalmente ma sono pre-programmati a un certo pattern comportamentale o una strategia mista. Col passare del tempo il principio di selezione naturale inciderà sulla distribuzione dei comportamenti.\\
 
