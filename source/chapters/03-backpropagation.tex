@@ -1,3 +1,5 @@
+%!TEX root = ../main.tex
+
 \chapter{Algoritmo di back-propagation} % (fold)
 \label{cha:algoritmo_di_back_propagation}
 Il problema incontrato nell’addestramento delle reti multistrato è il seguente: volendo adottare un meccanismo di aggiornamento dei pesi simile a quello nelle reti a singolo strato (in cui l’errore è calcolato come differenza tra l’uscita desiderata e l’uscita effettiva di ciascun neurone) si riesce ad aggiornare solo i pesi relativi ai neuroni di uscita, ma non quelli relativi ai neuroni degli strati nascosti. Infatti, mentre per lo strato di uscita si conosce l’uscita desiderata (tale uscita viene data come secondo elemento delle coppie che costituiscono gli esempi del training set), niente si sa dell’uscita desiderata dai neuroni nascosti.\\
@@ -38,8 +40,7 @@ Il processo viene di solito ripetuto ripresentando alla rete, in ordine casuale,
 
 \newpage
 
-Dopo l’addestramento la rete viene testata controllandone il comportamento su un insieme di dati, detto test set, costituito da esempi non utilizzati durante la fase di training. La fase di test ha quindi lo scopo di valutare la capacità di generalizzazione della rete neurale.
-Si dice che la rete ha imparato, cioè è in grado di fornire risposte anche per ingressi che non le sono mai stati presentati durante la fase di addestramento.\\
+Dopo l’addestramento la rete viene testata controllandone il comportamento su un insieme di dati, detto test set, costituito da esempi non utilizzati durante la fase di training. La fase di test ha quindi lo scopo di valutare la capacità di generalizzazione della rete neurale. Si dice che la rete ha imparato, cioè è in grado di fornire risposte anche per ingressi che non le sono mai stati presentati durante la fase di addestramento.\\
 
 Ovviamente le prestazioni di una rete neurale dipendono fortemente dall’insieme di esempi scelti per l’addestramento. Tali esempi devono quindi essere rappresentativi della realtà che la rete deve apprendere e in cui verrà utilizzata. L’addestramento è in effetti un processo ad hoc dipendente dallo specifico problema trattato.\\
 
@@ -53,9 +54,9 @@ dove
     &\bar{y}_\mu \mbox{ con $\mu=1, \dots, p$ è il vettore dell'output desiderato}
 \end{align*}
 
-L'apprendimento consiste nel trovare una configurazione di pesi in modo tale che l'output della rete sia il più vicino possibile all'output desiderato per tutti gli esempi presenti nel training set.\\
+L'apprendimento consiste nel trovare una configurazione di pesi tale che l'output della rete sia il più vicino possibile all'output desiderato per tutti gli esempi presenti nel training set.\\
 
-Formalmente, si tratta di trovare una configurazione di pesi tra tutte le possibili combinazioni $\overline{W}$ che minimizzi la seguente \emph{funzione di errore}. Essa dipende dal vettore h-esimo di output $out_\mu$ restituito dalla rete, dato il vettore $\mu$-esimo di ingresso $\overline{x}_\mu$ e dal vettore h-esimo di output $\overline{y}_\mu$ del training set. In termini matematici:
+Formalmente, si tratta di trovare una configurazione di pesi tra tutte le possibili combinazioni $\overline{W}$ che minimizzi la seguente \emph{funzione di errore}. Essa dipende dal vettore $\mu$-esimo di output $out_\mu$ restituito dalla rete, dato il vettore $\mu$-esimo di ingresso $\overline{x}_\mu$ e dal vettore $\mu$-esimo di output $\overline{y}_\mu$ del training set. In termini matematici:
 \begin{align*}
     \min_{\bar{w} \in \overline{W}} E(\bar{w}) &= \frac{1}{2} \sum_{\mu=1}^p \| \underbrace{\bar{y}_\mu}_\textrm{desiderato} - \underbrace{out_\mu (\bar{w})}_\textrm{reale} \|_2^2 \\
     &= \frac{1}{2} \sum_{\mu=1}^p \sum_{k=1}^n \left(y_k^\mu - out_k^\mu (\bar{w})\right)^2
@@ -210,7 +211,7 @@ Dove:
 
 \subsection{Aggiornamento pesi strato input-nascosto} % (fold)
 \label{sub:aggiornamento_pesi_strato_input_nascosto}
-Passiamo ora al calcolo della variazione di peso sinaptico tra il neurone nascosto $j$ e il neurone di input $k$ per un certo pattern $\mu$ del training set.
+Si passa ora al calcolo della variazione di peso sinaptico tra il neurone nascosto $j$ e il neurone di input $k$ per un certo pattern $\mu$ del training set.
 \begin{align*}
     \Delta w_{jk} &= - \eta \cdot \frac{\partial E}{\partial w_{jk}} \\
     &= \eta \cdot \sum_\mu \sum_i (y^\mu_i - O^\mu_i)  \frac{\partial O^\mu_i}{\partial w_{jk}} \\
@@ -332,7 +333,7 @@ L'algoritmo si potrebbe fermare quando $\| w^{t+1} - w^t \| < \epsilon$ oppure d
 
 \section{Il momento} % (fold)
 \label{sub:il_momento}
-La scelta di $\eta$ influenza molto il comportamento dell'algoritmo, infatti se scegliamo valori troppo piccoli, la convergenza sarà lenta, mentre se scegliamo valori troppo grandi si rischia di avere una rete instabile con comportamento oscillatorio.
+La scelta di $\eta$ influenza molto il comportamento dell'algoritmo, infatti se scegliamo valori troppo piccoli, la convergenza sarà lenta, mentre se si scelgono valori troppo grandi si rischia di avere una rete instabile con comportamento oscillatorio.
 Un metodo semplice per incrementare il fattore di apprendimento senza il rischio di rendere la rete instabile consiste nel modificare la regola di aggiornamento inserendo un nuovo termine: \emph{il momento}, una costante di proporzionalità alla precedente variazione dei pesi.
 \begin{align}
     \Delta w_{pq} (t + 1) = \underbrace{\alpha \Delta_{pq} (t)}_\textrm{momento} - \eta \frac{\partial E}{\partial w_{pq}}

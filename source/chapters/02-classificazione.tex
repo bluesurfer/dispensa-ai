@@ -1,4 +1,5 @@
-%!TEX root = /Users/andrea/Unive/Specialistica/Artificial Intelligence/Mod. A/Dispensa/main.tex
+%!TEX root = ../main.tex
+
 \chapter{Problema di classificazione} % (fold)
 \label{cha:problema_di_classificazione}
 
@@ -130,10 +131,7 @@ Nella pratica non è dato sapere se un problema è o meno linearmente separabile
 \label{sec:percettrone_a_più_strati}
 Come si è visto nei paragrafi precedenti il percettrone a singolo strato è limitato ai problemi linearmente separabili. Aggiungendo strati nascosti è possibile, tuttavia, rappresentare tutte le operazioni booleane incluso lo XOR. I percettroni multi-strato sono noti da molto tempo, ma gli algoritmi per l'apprendimento sono stati ideati solo recentemente (1986).\\
 
-La rete di un percettrone multi-strato consiste in un insieme di ingressi (input layer), uno o più strati nascosti di neuroni (hidden layers) e un insieme di neuroni di uscita (output layer). Il segnale di input si propaga attraverso la rete in avanti da layer a layer.
-
-
-Una rete di questo tipo ha tre caratteristiche distintive:
+La rete di un percettrone multi-strato consiste in un insieme di ingressi (input layer), uno o più strati nascosti di neuroni (hidden layers) e un insieme di neuroni di uscita (output layer). Il segnale di input si propaga attraverso la rete in avanti da layer a layer. Una rete di questo tipo ha tre caratteristiche distintive:
 \begin{itemize}
     \item ogni neurone include una \textbf{funzione di attivazione non lineare differenziabile }(ad es: funzione
 sigmoidale);
@@ -146,7 +144,7 @@ In questa rete troviamo due tipi di segnali:
     \item \textbf{segnale di errore:} un segnale di errore ha origine nel layer di uscita e si propaga all'indietro attraverso la rete.
 \end{enumerate}
 
-Ogni neurone nascosto o d'uscita di un multilayer perceptron esegue due computazioni:
+Ogni neurone nascosto o d'uscita di un percettrone multistrato esegue due computazioni:
 \begin{enumerate}
     \item la \textbf{computazione del segnale di funzione} espressa come funzione non lineare continua
 di un segnale di input e dei pesi sinaptici associati al neurone;

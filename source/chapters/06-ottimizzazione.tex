@@ -1,14 +1,14 @@
+%!TEX root = ../main.tex
+
 \chapter{Ottimizzazione con le Reti Neurali} % (fold)
 \label{cha:ottimizzazione_con_le_reti_neurali}
-In questo capitolo si analizza l'utilizzo di una rete di Hopfield, come strumento di ottimizzazzione, per fornire una soluzione ottimale a problemi NP-Difficile. In particolare sarà introdotto il problema del commesso viaggiatore (Traveling Salesman Problem).
+In questo capitolo saranno introdotti alcuni famosi problemi NP-Difficili: il problema del commesso viaggiatore (TSP) e il problema della cricca massima (MCP). Dal momento che questi non sono risolvibili in termini polinomiali sarà fornita una formulazione alternativa del problema in modo tale da poter utilizzare tecniche di ottimizzazione per approssimare una soluzione.
 
 \section{Problema del commesso viaggiatore} % (fold)
 \label{sec:problema_del_commesso_viaggiatore}
-In questa sezione si introduce il problema del commesso viaggiatore (abbreviato TSP) e una sua possibile soluzione attraverso l'utilizzo delle reti di Hopfield.\\
+Il problema del commesso viaggiatore (in inglese “travelling salesman problem”) nasce dalla sua più tipica rappresentazione: data una rete di città, connesse tramite delle strade, trovare il percorso di minore lunghezza che un commesso viaggiatore deve seguire per visitare tutte le città una e una sola volta per poi tornare alla città di partenza.\\
 
-Il nome del problema nasce dalla sua più tipica rappresentazione: data una rete di città, connesse tramite delle strade, trovare il percorso di minore lunghezza che un commesso viaggiatore deve seguire per visitare tutte le città una e una sola volta per poi tornare alla città di partenza.\\
-
-Il problema è di considerevole importanza pratica, al di là delle ovvie applicazioni nella logistica e nei trasporti. Un esempio classico è la costruzione di circuiti stampati, nella pianificazione del percorso del trapano per creare i fori nella piastra.
+Il problema è di considerevole importanza pratica, al di là delle ovvie applicazioni nella logistica e nei trasporti.
 
 
 \subsection{Formulazione del problema} % (fold)
@@ -45,7 +45,7 @@ La rete di città può essere rappresentata come un grafo in cui le città sono 
 
 \subsection{Soluzione del TSP con le reti di Hopfield} % (fold)
 \label{sub:soluzione_del_tsp_con_le_reti_di_hopfield}
-Risolvere un problema di ottimizzazione con le reti di Hopfield richiede di \emph{trovare una funzione di energia $E$ adeguata in modo tale che il minimo corrisponda alla soluzione del problema che si sta affrontando.}\\
+È possibile affrontare questo problema utilizzando le reti di Hopfield. Per fare ciò è necessario \emph{trovare una funzione di energia $E$ adeguata in modo tale che il minimo corrisponda alla soluzione del problema che si sta affrontando.}\\
 
 Per prima cosa è necessario rappresentare il TSP attraverso una matrice di permutazione per identificare un percorso. Ad esempio dato il grafo in Figura~\ref{fig:graph}, il percorso $B \rightarrow A \rightarrow C \rightarrow D$ può essere rappresentato con la seguente matrice:\\
 
@@ -319,7 +319,7 @@ Il problema consiste nel trovare una cricca massimale (MCP). Ad esempio si consi
     \end{tikzpicture}
     \caption{Un grafo non orientato.}\label{fig:graph1}
 \end{figure}
-Le clique nel grafo sono:
+Alcune clique nel grafo sono:
 \begin{align*}
     C_1 &= \{1,2\} \tag{$C_1$ non è massimale perché $C_1 \subseteq C_2$}\\
     C_2 &= \{1,2,3\} \tag{Massimale e massima}\\
@@ -328,7 +328,7 @@ Le clique nel grafo sono:
 
 \newpage
 
-Trovare la cricca massimale è un problema facile, mentre trovare quella massima è NP-difficile, così come trovare la dimensione di tale clique. In questa sezione si affronta il problema sotto quest'ultimo punto di vista.
+Trovare una clique massimale è un problema facile, mentre trovare quella massima è NP-difficile, così come trovare la dimensione di tale clique. In questa sezione si affronta il problema sotto quest'ultimo punto di vista.
 
 \subsection{Formulazione continua di MCP} % (fold)
 Per affrontare il problema con le reti neurali è necessario trasformare MCP da problema discreto a problema continuo. Nell'esempio del TSP con il modello di Hopfield, non è detto che ci sia il percorso inverso (potremo ottenere ad esempio una matrice che non ha significato); in questo nuovo problema MCP, la bidirezionalità è d'obbligo.\\
@@ -452,7 +452,7 @@ Dunque $x'$ e $x''$ \textbf{non} sono vettori caratteristici e non possono esser
 
 Quello che è stato fatto finora è prendere il problema $P$ di clique massima nel discreto e trasformarlo in un problema $P'$ di ottimizzazione quadratica nel continuo. A questo punto è necessario mappare la soluzione del problema $P'$ in una soluzione del problema originale $P$.  Questo è possibile se la soluzione ottenuta in $P'$ è un vettore caratteristico.\\
 
-Il problema delle soluzioni spurie è stato recentemente risolto da Bomze (1995) proponendo una versione regolarizzata di $f_G(x)$. La soluzione consiste nel sommare $1/2$ alla diagonale principale della matrice di adiacenza $A$.
+Il problema delle soluzioni spurie è stato risolto da Immanuel Bomze (1995) proponendo una versione regolarizzata di $f_G(x)$. La soluzione consiste nel sommare $1/2$ alla diagonale principale della matrice di adiacenza $A$.
 \begin{align*}
     A' = A + \frac{1}{2} I
 \end{align*}

@@ -1,3 +1,5 @@
+%!TEX root = ../main.tex
+
 \chapter{Euristiche per migliorare l'apprendimento} % (fold)
 \label{cha:euristiche_per_migliorare_l'apprendimento}
 Per garantire la convergenza di un algoritmo di apprendimento non esistono criteri ben definiti. Ci sono una serie di questioni pratiche e teoriche da affrontare quando si vuole addestrare una rete neurale. Ad esempio: di quanti strati una rete dovrà essere composta, oppure, quante unità devono esserci per ogni strato. Per rispondere a queste domande si introduce il concetto di \textbf{generalizzazione}.
@@ -31,7 +33,7 @@ Dal momento che stiamo considerando l'apprendimento come un'approssimazione di u
         \draw[thick, color=green, dashed] (3, 0) -- (3, 4) node[above] {overfitting};
         
     \end{tikzpicture}
-    \caption{La curva blu mostra l'andamento dell'errore nel classificare i dati di training, mentre la curva rossa mostra l'errore nel classificare i dati di test o validazione. Se l'errore di validazione aumenta mentre l'errore sui dati di training diminuisce, ciò indica che siamo in presenza di un possibile caso di overfitting.}\label{fig:overfit}
+    \caption{La curva blu mostra l'andamento dell'errore nel classificare i dati di training, mentre la curva rossa mostra l'errore nel classificare i dati di test o validazione. Se l'errore di validazione aumenta mentre l'errore sui dati di training diminuisce, ciò indica che siamo in presenza di un possibile caso di overfitting.}
 \end{figure}
 
 \begin{figure}[h!]
@@ -44,7 +46,7 @@ La capacità di generalizzazione è influenzata da tre fattori principali: le di
 
 \newpage
 
-Alla luce del fatto che non abbiamo controllo sulla complessità del problema, è possibile affrontare il problema della generalizzazione sotto due punti di vista differenti:
+Alla luce del fatto che non si ha alcun controllo sulla complessità del problema, è possibile affrontare il problema della generalizzazione sotto due punti di vista differenti:
 \begin{enumerate}
     \item l'architettura della rete è prefissata e lo scopo è determinare una dimensione del training set ottimale per una buona generalizzazione;
     \item la dimensione del training set è prefissata e lo scopo è di determinare la migliore architettura di rete per una buona generalizzazione.
@@ -56,7 +58,7 @@ Alla luce del fatto che non abbiamo controllo sulla complessità del problema, �
 \section{Cross-validation} % (fold)
 \label{sec:cross_validation}
 Si introduce ora uno strumento per risolvere il problema della selezione dell’architettura della rete neurale; più precisamente questo strumento consente, dato un insieme di possibili modelli, di scegliere quello migliore secondo certi criteri.
-Inizialmente il set di dati viene ripartito in modo random in un training set e un test set. Il training set è ulteriormente ripartito in due insiemi disgiunti:
+Inizialmente il set di dati viene ripartito in modo random in un training set e un test set. Il training set è ulteriormente diviso in due insiemi disgiunti:
 \begin{itemize}
     \item \textbf{Estimation subset:} usato per il training del modello;
     \item \textbf{Validation subset:} usato per validare il modello.
@@ -89,14 +91,32 @@ Quando il numero di esempi è ancora più piccolo si può ricorrere ad una forma
 \section{Metodo di training “early-stopping”} % (fold)
 \label{sec:metodo_di_training_early_stopping_}
 Con l’obiettivo di una buona generalizzazione è molto difficile decidere quando è il momento di bloccare il training. C'è il rischio di overfitting dei dati se non si ferma l'addestramento al punto giusto.\\
-Possiamo evitare il fenomeno dell'overfitting ricorrendo al metodo precedente; l'estimation set viene usato per addestrare la rete e il validation set serve a testarla dopo ogni epoca. Più precisamente il processo procede nel seguente modo:
+È possibile evitare il fenomeno dell'overfitting ricorrendo al metodo precedente; l'estimation set viene usato per addestrare la rete e il validation set serve a testarla dopo ogni epoca. Più precisamente il processo procede nel seguente modo:
 \begin{itemize}
     \item dopo un periodo di addestramento sull'estimation set, si calcola l'errore di validazione per ogni esempio del validation set;
     \item quando la fase di validazione è completa, si riprende la fase di addestramento per un altro periodo.
 \end{itemize}
+
+Se si osserva la sola curva dell'errore dell’estimation set (vedi Figura~\ref{fig:overfit}), questo si riduce all’aumentare delle epoche, e verrebbe naturale pensare di eseguire il training anche oltre il punto di minimo della curva del validation set. In realtà ciò che la rete apprende dopo quel punto è il rumore contenuto nei dati del training/estimation set. Questa euristica suggerisce quindi di fermare l'addestramento in corrispondenza del minimo della curva relativa al validation set.
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}
+        \draw[->] (0,0) -- node[left] {errore} (0,5);
+        \draw[->,below right] (0,0) -- node {n. epoche} (8,0);
+
+        \draw[thick, color=blue] plot [smooth, tension=0.5] coordinates{(0, 4.5) (3, 2) (7, 4)} node[above left] {Validation set};
+        \draw[thick, color=red] plot [smooth, tension=0.5] coordinates{(0, 3) (3, 1) (7, 0.2)} node[above left=0.5cm] {Training set};
+        
+        \draw[thick, color=green, dashed] (3, 0) -- (3, 4) node[above] {stop here};
+        
+    \end{tikzpicture}
+    \caption{Andamento di errore e metodo di early stopping.}\label{fig:overfit}
+\end{figure}
+
+
+
 % section metodo_di_training_early_stopping_ (end)
 
-Se guardiamo la sola curva dell'errore dell’estimation set (vedi Figura~\ref{fig:overfit}), questo si riduce all’aumentare delle epoche, e verrebbe naturale pensare di eseguire il training anche oltre il punto di minimo della curva del validation set. In realtà ciò che la rete apprende dopo quel punto è il rumore contenuto nei dati del training/estimation set. Questa euristica suggerisce quindi di fermare l'addestramento in corrispondenza del minimo della curva relativa al validation set.
 \newpage
 
 \section{Tecniche di pruning} % (fold)
