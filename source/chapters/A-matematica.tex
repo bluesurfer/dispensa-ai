@@ -8,53 +8,53 @@
 
 Siano $f(x)$ e $g(x)$ funzioni reali di variabile reale $x$ derivabili, e sia $\mathrm{D}$ l'operazione di derivazione rispetto a $x$:
 \begin{align*}
-    \mathrm{D}[f(x)]=f'(x) \qquad \mathrm{D}[g(x)]=g'(x)
+	\mathrm{D}[f(x)]=f'(x) \qquad \mathrm{D}[g(x)]=g'(x)
 \end{align*}
 \begin{itemize}
-    \item \textbf{Regola della somma}:
-    \begin{align*}
-        \mathrm{D}[\alpha f(x)+ \beta g(x)] = \alpha f'(x) + \beta g'(x) \qquad \alpha, \beta \in \mathbb{R}
-    \end{align*}
-    \item \textbf{Regola del prodotto}:
-    \begin{align*}
-        \mathrm{D} [ {f(x) \cdot g(x)}] = f'(x) \cdot g(x) + f(x) \cdot g'(x) 
-    \end{align*}
-    \item \textbf{Regola del quoziente}:
-    \begin{align*}
-        \mathrm{D}\! \left[ {f(x) \over g(x)} \right] = { f'(x)  \cdot g(x) - f(x) \cdot g'(x) \over g(x)^2}
-    \end{align*}
-    \item \textbf{Regola della funzione reciproca}:
-    \begin{align*}
-        \mathrm{D}\! \left[ {1 \over f(x)} \right] = -{f'(x) \over f(x)^2} 
-    \end{align*}
-    \item \textbf{Regola della funzione inversa}:
-    \begin{align*}
-        &\mathrm{D}[f^{-1}(y)]  =  {1 \over f'(x)} \\
-        &\text{con:} \\
-        &y = {f(x)} \qquad x = {f^{-1}(y)}
-    \end{align*}
-    \item \textbf{Regola della catena}
-    \begin{align*}
-        \mathrm{D} \left[ f \left( g(x) \right) \right] = f' \left( g(x) \right) \cdot g'(x) 
-    \end{align*}
+	\item \textbf{Regola della somma}:
+	\begin{align*}
+		\mathrm{D}[\alpha f(x)+ \beta g(x)] = \alpha f'(x) + \beta g'(x) \qquad \alpha, \beta \in \mathbb{R}
+	\end{align*}
+	\item \textbf{Regola del prodotto}:
+	\begin{align*}
+		\mathrm{D} [ {f(x) \cdot g(x)}] = f'(x) \cdot g(x) + f(x) \cdot g'(x) 
+	\end{align*}
+	\item \textbf{Regola del quoziente}:
+	\begin{align*}
+		\mathrm{D}\! \left[ {f(x) \over g(x)} \right] = { f'(x)  \cdot g(x) - f(x) \cdot g'(x) \over g(x)^2}
+	\end{align*}
+	\item \textbf{Regola della funzione reciproca}:
+	\begin{align*}
+		\mathrm{D}\! \left[ {1 \over f(x)} \right] = -{f'(x) \over f(x)^2} 
+	\end{align*}
+	\item \textbf{Regola della funzione inversa}:
+	\begin{align*}
+		&\mathrm{D}[f^{-1}(y)]  =  {1 \over f'(x)} \\
+		&\text{con:} \\
+		&y = {f(x)} \qquad x = {f^{-1}(y)}
+	\end{align*}
+	\item \textbf{Regola della catena}
+	\begin{align*}
+		\mathrm{D} \left[ f \left( g(x) \right) \right] = f' \left( g(x) \right) \cdot g'(x) 
+	\end{align*}
 \end{itemize}
 
 \section{Integrali}
 
 \begin{thm}[Teorema Fondamentale del Calcolo Integrale (prima parte)]
 	
-Sia $f\colon [a,b]\to\mathbb{R}$ una funzione integrabile. Si definisce funzione integrale di $f$ la funzione $F$ tale che:
-\begin{align*}
-	F(x)=\int_a^x f(t)dt \qquad a \le x \le b
-\end{align*}
-Se $f$ è limitata, allora $F$ è una funzione continua in $[a,b]$. 
+	Sia $f\colon [a,b]\to\mathbb{R}$ una funzione integrabile. Si definisce funzione integrale di $f$ la funzione $F$ tale che:
+	\begin{align*}
+		F(x)=\int_a^x f(t)dt \qquad a \le x \le b
+	\end{align*}
+	Se $f$ è limitata, allora $F$ è una funzione continua in $[a,b]$. 
 
-Se inoltre $f$ è una funzione continua in $(a,b)$, allora $F$ è funzione differenziabile in tutti i punti in cui $f$ è continua e si ha:
-\begin{align*}
-	F^\prime(x)=f(x)
-\end{align*}
+	Se inoltre $f$ è una funzione continua in $(a,b)$, allora $F$ è funzione differenziabile in tutti i punti in cui $f$ è continua e si ha:
+	\begin{align*}
+		F^\prime(x)=f(x)
+	\end{align*}
 
-cioè $F$ risulta essere una primitiva di $f$.
+	cioè $F$ risulta essere una primitiva di $f$.
 \end{thm}
 
 % section derivate (end)

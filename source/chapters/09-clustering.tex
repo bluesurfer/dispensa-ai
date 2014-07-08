@@ -40,13 +40,13 @@ Nelle sezioni seguenti saranno presentate alcune metodologie di clustering e ci 
 
 \section{K-Means} % (fold)
 \label{sec:k_means}
-K-Means è probabilmente il più famoso algoritmo di partizionamento. Dato un insieme di osservazioni $\{x^{(1)},\dots,x^{(n)} \}$ dove $x_i$ è un vettore m-dimensionale, lo scopo dell'algortimo è partizionare l'insieme in $k$ insiemi $k \leq n$ il più possibile coesi tra loro (problema del clustering).\\
+K-Means è probabilmente il più famoso algoritmo di partizionamento feature-based. Dato un insieme di osservazioni $\{x^{(1)},\dots,x^{(n)} \}$ dove $x_i$ è un vettore m-dimensionale, lo scopo dell'algortimo è partizionare l'insieme in $k$ insiemi $k \leq n$ il più possibile coesi tra loro (problema del clustering).\\
 
-L'algoritmo k-means seleziona a caso $k$ prototipi, ciascuno di essi rappresenta il proprio gruppo di appartenzenza, idealmente il centro del cluster. Formalmente si introduce un insieme di vettori:
+L'algoritmo seleziona a caso $k$ prototipi, rappresentanti il proprio gruppo di appartenzenza, idealmente il centro del cluster. Formalmente si ha un insieme di vettori:
 \begin{align*}
 	\mu_j, \text{ dove } j = 1, \dots, k
 \end{align*}
-L'obiettivo ora consiste nel raggruppare le osservazioni e assegnare i vettori $\mu_j$ in modo tale che la somma del quadrato delle distanze da un punto al proprio centroide $\mu_j$ sia minima. In termini matematici si tratta di minimizzare la seguente funzione:
+L'obiettivo ora consiste nel raggruppare le osservazioni e reimpostare i vettori $\mu_j$ in modo tale che la somma del quadrato delle distanze da un punto al proprio centroide $\mu_j$ sia minima. In termini matematici si tratta di minimizzare la seguente funzione:
 \begin{align}
 	\min_{\{\mu_1, \dots, \mu_k\}} \sum_{i=1}^n \sum_{j=i}^k r_{ij} \| x_i - \mu_j \|^2\label{eq:j}
 \end{align}
@@ -78,7 +78,7 @@ Ovvero, si cerca di “spostare” al centro del cluster il prototipo $\mu_j$ co
 	\subfigure{
 	\includegraphics[width=12cm]{images/kmeans2}
 	}
-	\caption{Esempio sulla convergenza (dopo 5 iterazioni) a un minimo locale dell'algoritmo k-means}
+	\caption[Convergenza in K-means]{Esempio sulla convergenza (dopo 5 iterazioni) a un minimo locale dell'algoritmo k-means}
 \end{figure}
 
 % section k_means (end)
@@ -247,7 +247,7 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 			\path (\from) edge[near start, auto] node{$1$} (\to);
 		\end{tikzpicture}
 		}
-		\caption{Rappresentazione della similarità: i nodi $\{2,3,4\}$ sono altamente simili tra loro. Se si tenta di aggiungere il vertice 1 che è dissimile dalla similarità interna dell'insieme $\{2,3,4\}$ allora la similarità complessiva del nuovo insieme $\{1,2,3,4\}$ diminuisce i.e. $W_{\{1,2,3,4\}}(1) < 0$. Nel secondo caso il vertice 5 è altamente similare ai nodi $\{6,7,8\}$ di conseguenza aggiungendolo all'insieme la similarità complessiva aumenta i.e. $W_{\{5,6,7,8\}}(5) > 0$.}
+		\caption[Insiemi dominanti e similarità]{Rappresentazione della similarità: i nodi $\{2,3,4\}$ sono altamente simili tra loro. Se si tenta di aggiungere il vertice 1 che è dissimile dalla similarità interna dell'insieme $\{2,3,4\}$ allora la similarità complessiva del nuovo insieme $\{1,2,3,4\}$ diminuisce i.e. $W_{\{1,2,3,4\}}(1) < 0$. Nel secondo caso il vertice 5 è altamente similare ai nodi $\{6,7,8\}$ di conseguenza aggiungendolo all'insieme la similarità complessiva aumenta i.e. $W_{\{5,6,7,8\}}(5) > 0$.}
 	\end{figure}
 
 	\newpage
@@ -457,7 +457,7 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 	
 	\newpage
 	
-	Il problema della trasduzione su grafi non pesati può essere formalizzato come un \emph{problema di soddisfacimento di vincoli} (CSP) definito su un insieme di variabili $V = \{v_1, \dots, v_n\}$ i cui valori appartengono ai seguenti domini:
+	Sia $A = a_{ij}$ la matrice di adiacenza binaria allora il problema della trasduzione su grafi non pesati può essere formalizzato come un \emph{problema di soddisfacimento di vincoli} (CSP) definito su un insieme di variabili $V = \{v_1, \dots, v_n\}$ i cui valori appartengono ai seguenti domini:
 	\begin{align*}
 		D_{v_i} =
 		\begin{cases}
@@ -509,8 +509,8 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 	\end{align*}
 	Si noti infine che nel caso di matrici di similarità binarie, allora le matrici di payoff parziale coincidono con le matrici di compatibilità definite nel CSP. Inoltre, se sono ammesse solo strategie pure allora il GTG si riduce al CSP. In questo caso in un equilibrio di Nash puro i giocatori nel vicinato giocano la stessa strategia pura con lo scopo di ottenere il payoff massimo contro i vicini. Tale equilibrio di Nash corrisponde alla soluzione del CSP se ne esiste una altrimenti il CSP è insoddisfabile e quindi il GTG non ammette equilibri di Nash.
 	
-	% section trasduzione_di_grafi (end)
-	% chapter clustering (end)
+% section trasduzione_di_grafi (end)
+% chapter clustering (end)
 
 
 
