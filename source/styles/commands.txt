@@ -1,2 +1,0 @@
-sudo cp slashbox.sty /usr/local/texlive/2012/texmf-dist/tex/latex/base
-sudo texhash
