@@ -54,7 +54,7 @@ Una rete neurale può essere utilizzata per risolvere un problema di classificaz
 	\centering
 	\begin{tikzpicture}[shorten >=1pt, node distance=\layersep]
 		% Draw the input layer nodes
-		\node[input neuron, fill=blue, pin=left:Extra Unit $x_0:-1$] (I-0) at (0, 0) {};
+		\node[input neuron, fill=RoyalBlue, pin=left:Extra Unit $x_0:-1$] (I-0) at (0, 0) {};
 		\foreach \name / \y in {1,...,3}
 		% This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
 		\node[input neuron, pin=left:$x_\y$] (I-\name) at (0,-\y) {};
@@ -62,7 +62,7 @@ Una rete neurale può essere utilizzata per risolvere un problema di classificaz
 		\draw[dotted, thick] (I-3) -- (I-4);
 		% Draw the output layer node
 		\node[output neuron, right of=I-3] (O) {$\Sigma$};
-		\node[neuron, right of=O] (F) {$\Theta(x)$};
+		\node[neuron, rectangle, inner sep=5pt, right of=O] (F) {$\Theta(x)$};
 		\node[right of=F] (Y) {Output};
 		\path (O) edge [->] (F)
 		(F) edge [->] (Y);

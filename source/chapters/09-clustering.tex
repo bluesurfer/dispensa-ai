@@ -137,7 +137,7 @@ L'algoritmo nella pratica si è dimostrato abbastanza efficace tuttavia il calco
 
 Il concetto di insieme dominante nasce dallo studio sulla formulazione continua del problema della cricca massima (vedi Sezione~\ref{sec:problema_della_cricca_massima}). L'insieme dominante, infatti, non è altro che una clique di un grafo nel caso in cui gli archi siano pesati, ovvero insiemi di vertici che hanno alta omogeneità interna e alta disomogeneità verso l'esterno.\\
 
-In questo contesto i dati sono, dunque, rappresentati da un grafo non orientato $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E\subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva. I vertici rappresentato i datapoints, gli archi le relazioni tra essi e i pesi rispecchiano la similarità tra coppie di vertici connessi.\\
+In questo contesto i dati sono, dunque, rappresentati da un grafo non orientato $G = (V, E , w)$ dove $V = \{ 1, \dots, n \}$ è l'insieme dei vertici, $E\subseteq V \times V$ l'insieme degli archi e $w : E \rightarrow \mathbb{R}_+$ è la funzione dei pesi positiva. I vertici rappresentano i datapoints, gli archi le relazioni tra essi e i pesi rispecchiano la similarità tra coppie di vertici connessi.\\
 
 Come di consueto, il grafo è rappresentato con la sua matrice di adiacenza pesata $A$, che è la matrice simmetrica $n \times n$ dove $A = a_{ij}$ è definito nel seguente modo:
 \begin{align*}
@@ -183,7 +183,7 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 		w_S(i) =
 		\begin{cases}
 			1, &\text{ if }|S|=1\\
-			\displaystyle\sum_{j \in S} \phi_{S \setminus \{i\}} (i, j) \cdot w_{S \setminus \{i\}}(j) &\text{ otherwise}
+			\displaystyle\sum_{j \in S \setminus \{i\}} \phi_{S \setminus \{i\}} (i, j) \cdot w_{S \setminus \{i\}}(j) &\text{ otherwise}
 		\end{cases}
 	\end{align*}
 	Si tratta di una definizione ricorsiva e permette di assegnare un peso (similarità relativa) ad ogni vertice.
@@ -363,8 +363,8 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 	\label{sec:problema_di_etichettatura}
 	In un tipico labelling (consistent) problem si hanno:
 	\begin{itemize}
-		\item $m$ oggetti $B= \{b_1, \dots, b_n\}$;
-		\item $n$ etichette (labels) $\Lambda = \{\lambda_1, \dots, \lambda_m\}$.
+		\item $n$ oggetti $B= \{b_1, \dots, b_n\}$;
+		\item $m$ etichette (labels) $\Lambda = \{\lambda_1, \dots, \lambda_m\}$.
 	\end{itemize} 
 	Lo scopo è assegnare a ciascun oggetto in $B$ un'etichetta in $\Lambda$.\\
 	
@@ -404,7 +404,7 @@ Si consideri $S \subseteq V$ un insieme non vuoto di vertici $i \in S$. Si intro
 	
 	Un processo \textbf{relaxation labelling} prende in input un assegnamento di etichette iniziale $\bar{p}^{(0)} \in \mathcal{K}$ e lo aggiusta iterativamente tenendo conto del modello di compatibilità utilizzando la seguente regola di aggiornamento:
 	\begin{align}
-		p_i^{(t + 1)}(\lambda) = \frac{p_i^{(t)}\lambda q_i^{(t)} \lambda}{\displaystyle\sum_\mu p_i^{(t)}\mu q_i^{(t)} \mu}\label{eq:relax}
+		p_i^{(t + 1)}(\lambda) = \frac{p_i^{(t)}(\lambda) q_i^{(t)} (\lambda)}{\displaystyle\sum_\mu p_i^{(t)}(\mu) q_i^{(t)} (\mu)}\label{eq:relax}
 	\end{align}
 	Purchè la matrice di compatibilità sia non-negativa. Il processo evolve fino a quando non viene raggiunto un punto fisso ovvero quando $\bar{p}^{(t + 1)} = \bar{p}^(t)$. Nella pratica è solito fermare il processo quando la distanza tra due etichettamenti successivi è sotto una certa soglia oppure dopo un certo numero di iterazioni. Queste tecniche sono particolarmente utilizzate nel campo della visione artificiale.
 	

@@ -253,6 +253,7 @@ Si può costruire una rete di Hopfield $n \times n$ in cui il neurone $(i,j)$ è
 	\item solo $n$ regine sulla scacchiera.
 \end{enumerate}
 
+
 \newpage
 
 Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La matrice dei pesi è quindi data da:
@@ -262,6 +263,16 @@ Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La mat
 	& + C  \qquad \tag{Inibizione globale}\\
 	& + D (\delta_{i+j,k-l} + \delta_{i-j, k-l})(1 - \delta_{ik}) \tag{peso inibitorio sulle diagonale}
 \end{align*}
+
+L'ottimizzazione tramite le reti di Hopfield presenta, tuttavia, alcuni svantaggi:
+\begin{enumerate}
+	\item sono necessari $n^2$ neuroni;
+	\item il numero di connessioni è e $O(n^4)$;
+	\item i parametri $A, B, C, D$ sono difficili da determinare;
+	\item i risultati ottenuti sono raramente soluzioni ammisibili, ovvero matrici binarie con i vincoli rispettati;
+	\item è difficile evitare il problema dei minimi locali.
+\end{enumerate}
+
 % subsection problema_delle_n_regine (end)
 % section problema_del_commesso_viaggiatore (end)
 

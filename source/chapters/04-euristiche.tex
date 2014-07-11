@@ -206,7 +206,7 @@ dove $A$ è la matrice di dimensione $P_{n_o} \times n_o (n_h - 1)$ e le cui col
 \begin{align}
 	\min_{\bar{x}} \|A \bar{x} - b\|
 \end{align}
-In questo modo si riesce a preservare il comportamento della rete avendo rimosso il neurone $h$. Uno dei problemi fondamentali dell'algoritmo pruning è come meglio selezionare le unità che saranno rimosse. Idealmente, la scelta più appropriata sarebbe eliminare tutte le unità nascoste che hanno il più piccolo \emph{residuo finale} calcolato dal sistema corrispondente.
+I fattori di aggiustamento così calcolati permettono di preservare il comportamento della rete avendo rimosso il neurone $h$. Uno dei problemi fondamentali dell'algoritmo pruning è come meglio selezionare le unità che saranno rimosse. Idealmente, la scelta più appropriata sarebbe eliminare tutte le unità nascoste che hanno il più piccolo \emph{residuo finale} calcolato dal sistema corrispondente.
 
 \newpage
 
@@ -226,7 +226,7 @@ Riassumendo i passi fondamentali dell'algoritmo di pruning sono i seguenti:
 	\State Ripetere:
 	\begin{enumerate}[(a)]
 		\item Trovare l'unità $h$ con $\| b \|$ minimo;
-		\item Risolvere il sistema corrispondente;
+		\item Risolvere il sistema corrispondente (aggiustare i pesi);
 		\item Rimuovere l'unità $h$.
 	\end{enumerate}
 	Fino a quando $Performance(pruned) - Performance(original) < \epsilon$
