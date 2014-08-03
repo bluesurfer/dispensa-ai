@@ -101,7 +101,7 @@ Si tratta di un \textbf{modello semplificato} dove $\Theta(x)$ è la funzione di
 	\end{cases}
 \end{align}
 
-Anziché utilizzare una funzione discreta si possono adottare funzioni continue in modo tale da rendere il sistema più realistico. In questa caso l'output corrisponde alla frequenza delle volte in cui un neurone tramette. Esistono diverse funzioni di transizione continue; le più usate sono la sigmoidea e la tangente iperbolica.\\
+Anziché utilizzare una funzione discreta si possono adottare funzioni continue in modo tale da rendere il sistema più realistico. In questa caso l'output corrisponde alla frequenza delle volte in cui un neurone trasmette. Esistono diverse funzioni di transizione continue; le più usate sono la sigmoidea e la tangente iperbolica.\\
 
 \begin{figure}[h!]
 	\begin{center}
@@ -172,11 +172,11 @@ Combinando opportunamente i neuroni di M\&P si possono costruire reti in grado d
 	\begin{tikzpicture}[node distance=\layersep]]
         
 		\node[input neuron] (I) {1};
-		\node[output neuron, pin={[pin edge={<-}]above:$\mu=\frac{1}{2}$}, right of=I] (S) {-1};
+		\node[output neuron, pin={[pin edge={<-}]above:$\mu=-\frac{1}{2}$}, right of=I] (S) {-1};
 		\node[right of=S] (O) {0};
 		\path 
 		(I) edge[->] node[above] {-1} (S)
-		(S) edge[->] node[above] {$-1 \leq \frac{1}{2}$} (O);
+		(S) edge[->] node[above] {$-1 \leq -\frac{1}{2}$} (O);
 	\end{tikzpicture}}
 	\caption{Operazioni logiche elementari nel modello M\&P.}
 \end{figure}

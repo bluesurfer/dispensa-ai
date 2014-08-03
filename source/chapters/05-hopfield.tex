@@ -181,7 +181,7 @@ Si enuncia ora una condizione sufficiente alla convergenza del sistema.
 	In questo modo si ottiene:
 	\begin{align*}
 		\Delta E &= - \Delta V_h \sum_{i \neq h} w_{ih} V_i(t)  - I_h \Delta V_h \\
-		&= - \Delta V_h \underbrace{\left[\sum_{i \neq h} w_{ih} V_i(t) + I_h \right]}_\textrm{input di $h$ al tempo t} \\
+		&= - \Delta V_h \underbrace{\left[\sum_{i \neq h} w_{ih} V_i(t) + I_h \right]}_\textrm{input di $h$ al tempo $t + 1$} \\
 		&= - \Delta V_h \cdot H_h
 	\end{align*}
 	A questo punto è necessario dimostrare che il prodotto $\Delta V_h \cdot H_h$ è sempre positivo in modo tale da provare la tesi, ovvero che $\Delta E \leq 0$. Per la regola di apprendimento \eqref{eq:learningrule}:
@@ -236,7 +236,7 @@ I pesi sono cosi calcolati:
 			0 & 0 & 0 & 2
 		\end{bmatrix}
 	\end{align*}
-	Si ricorda che l'ouput dell'unità i è dato da:
+	Si ricorda che l'output dell'unità $i$ è dato da:
 	\begin{align*}
 		s_i = Sgn \left(\sum_j w_{ij} s_j \right)
 	\end{align*}
@@ -270,7 +270,7 @@ I pesi sono cosi calcolati:
 		\end{align}
 		dove $g_\beta$ è la funzione di attivazione crescente, continua e non lineare. Le funzioni più utilizzate come $g$ sono la tangente iperbolica e la sigmoidea:
 		\begin{align*}
-			\tanh_\beta \mu = \frac {e^{\beta\mu} - e^{-\beta\mu}} {e^\beta\mu + e^{-\beta\mu}} \quad\in ]-1,1[
+			\tanh_\beta \mu = \frac {e^{\beta\mu} - e^{-\beta\mu}} {e^{\beta\mu} + e^{-\beta\mu}} \quad\in ]-1,1[
 			\qquad\qquad
 			g_\beta(\mu) =\frac{1}{1 + e^{- \beta \mu}} \quad\in ]0,1[
 		\end{align*}
@@ -341,7 +341,7 @@ I pesi sono cosi calcolati:
 		\end{thm}
 
 		\begin{proof}[Dimostrazione:]
-			È necessario dimostrare che $dE / dt \leq 0$ con uguaglianza quando un punto fisso è stato raggiunto. Si ricorda che solo $V_i$ dipende dal tempo.\\
+			È necessario dimostrare che $dE / dt \leq 0$ con uguaglianza quando un punto fisso è stato raggiunto. Si ricorda che solo gli output dei neuroni dipendono dal tempo.\\
 	
 			Nel calcolo della derivata $dE / dt$, al primo termine è applicata la regola del prodotto mentre per il secondo la regola della catena e il teorema fondamentale del calcolo integrale (vedi Appendice~\ref{cha:matematica}). In questo modo si ottiene:
 			\begin{align*}

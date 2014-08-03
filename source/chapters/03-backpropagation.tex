@@ -277,7 +277,7 @@ E l'output prodotto $O_i$ è:
 	\begin{align*}
 		\delta_p^\mu =
 		\begin{cases}
-			(y^\mu_p - O^\mu_p) \, g'(h^\mu_p), &\text{se $p$ è un neurone di ouput} \\
+			(y^\mu_p - O^\mu_p) \, g'(h^\mu_p), &\text{se $p$ è un neurone di output} \\
 			\displaystyle g'(h_p^\mu) \, \sum_i \delta^\mu_i \, W_{ip} &\text{altrimenti}
 		\end{cases}
 	\end{align*}
@@ -298,7 +298,7 @@ E l'output prodotto $O_i$ è:
 	Si consideri una rete con $M$ strati e $m=0,\dots,M$. Si denota inoltre
 	\begin{itemize}
 		\item $V^m_i$: output della i-esima unità del livello m;
-		\item $w^{ij}_m$: peso della connessione tra il j-esimo neurone dello strato $m-1$ e l'i-esimo neurone dello strato $m$. 
+		\item $w^m_{ij}$: peso della connessione tra il j-esimo neurone dello strato $m-1$ e l'i-esimo neurone dello strato $m$. 
 	\end{itemize}
 	L'algoritmo di retroazione si compone dei seguenti passi:
 	\begin{algorithmic}[1]% Taken from the algorithmicx package documentation
