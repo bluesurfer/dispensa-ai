@@ -1,0 +1,178 @@
+\chapter{Applicazioni della teoria dei giochi}
+
+In questo capitolo si mostrano applicazioni della teoria dei giochi in contesti diversi dal clustering: in particolare, vedremo il problema dell'\textbf{etichettatura consistente} e della \textbf{trasduzione di grafi}.
+
+\section{Problema di etichettatura}
+\label{sec:problema_di_etichettatura}
+
+In un problema di \textbf{etichettatura consistente} si hanno
+\begin{itemize}
+	\item un insieme di oggetti $B= \{b_1, \dots, b_n\}$;
+	\item un insieme di etichette $\Lambda = \{\lambda_1, \dots, \lambda_m\}$;
+\end{itemize} 
+e l'obiettivo è assegnare a ciascun oggetto in $B$ un'etichetta in $\Lambda$ utilizzando due fonti di informazione:
+\begin{itemize}
+	\item \textbf{misurazioni locali} che catturano le caratteristiche salienti di ogni oggetto visto in isolamento, espresse sotto forma di $n$ vettori $m$-dimensionali del tipo
+	\begin{displaymath}
+		\vec{p}_i^{(0)} = (p_i^{(0)}(\lambda_1), \dots, p_i^{(0)}(\lambda_m))
+	\end{displaymath}
+	con $p_i^{(0)}(\lambda) \geq 0$ per ogni $\lambda \in \Lambda$ e $\sum_{\lambda} p_i^{(0)}(\lambda) = 1$. L'elemento $p_i^{(0)}(\lambda)$ rappresenta il grado di confidenza iniziale (non contestuale) dell'ipotesi \emph{$b_i$ ha etichetta $\lambda$};
+	\item \textbf{informazioni contestuali} espresse in termini di matrici $n^2 \times m^2$ di coefficienti di compatibilità $\mat{R} = (r_{ij}(\lambda, \mu))$ dove $r_{ij}(\lambda, \mu)$ è la compatibilità tra l'ipotesi \emph{$b_i$ ha etichetta $\lambda$} e \emph{$b_j$ ha etichetta $\mu$}.
+\end{itemize}
+Un processo di \textbf{relaxation labeling} riceve in input un'etichettatura iniziale $\vec{p}^{(0)} = (\vec{p}_1^{(0)} \dots \vec{p}_n^{(0)})$ e la aggiorna iterativamente tenendo in considerazione il modello di compatibilità $\mat{R}$ in accordo alla formula
+\begin{displaymath}
+	p_i^{(t + 1)}(\lambda) = \frac{p_i^{(t)}(\lambda) q_i^{(t)}(\lambda; \vec{p})}{\sum_\mu p_i^{(t)}(\mu) q_i^{(t)}(\mu; \vec{p})}
+\end{displaymath}
+dove
+\begin{displaymath}
+	q_i^{(t)}(\lambda; \vec{p}) = \sum_j \sum_\mu p_j^{(t)}(\mu) r_{ij}(\lambda, \mu)
+\end{displaymath}
+è nota come \textbf{funzione di supporto} e quantifica la compatibilità al tempo $t$ tra l'ipotesi \emph{$b_i$ ha etichetta $\lambda$} e il contesto.
+
+Lo \textbf{spazio degli assegnamenti pesati} delle etichette è l'insieme convesso
+\begin{displaymath}
+	\mathcal{K} = \prod_{i = 1}^m \Delta
+\end{displaymath}
+dove $\Delta$ è il simplesso standard in $\mathbb{R}^n$. I vertici di $\mathcal{K}$ rappresentano \textbf{assegnamenti non ambigui} dove si assegna con probabilità $1$ un'etichetta a ciascun oggetto.
+
+Un assegnamento non ambiguo $\vec{p}$ si dice \textbf{consistente} se l'etichetta assegnata a ciascun oggetto da $\vec{p}$ riceve il più alto supporto dal contesto. Per analogia, si definisce la consistenza di un assegnamento pesato come segue.
+\begin{mydef}[Consistenza di un assegnamento pesato]
+	L'assegnamento pesato $\vec{p} \in \mathcal{K}$ è \defterm{consistente} se
+	\begin{displaymath}
+		\sum_\lambda p_i(\lambda)q_i(\lambda; \vec{p}) \geq \sum_\lambda v_i(\lambda) q_i(\lambda; \vec{p})
+	\end{displaymath}
+	per ogni $i = 1, \dots, n$ e $\vec{v} \in \mathcal{K}$. Se la disuguaglianza è stretta per $\vec{v} \neq \vec{p}$, allora $\vec{p}$ è \defterm{strettamente consisitente}.
+\end{mydef}
+\noindent Condizione necessaria affinché $\vec{p}$ sia strettamente consistente è che sia non ambiguo. Il seguente teorema fornisce un criterio operazionale per testare la consistenza di un etichettatura.
+\begin{thm}[R. A. Hummel, S. W. Zucker, 1983]
+	L'etichettatura pesata $\vec{p} \in \mathcal{K}$ è consistente se per ogni $i = 1, \dots, n$ valgono
+	\begin{itemize}
+		\item $q_i(\lambda) = c_i$ se $p_i(\lambda) > 0$;
+		\item $q_i(\lambda) \leq c_i$ se $p_i(\lambda) = 0$;
+	\end{itemize}
+	per costanti non negative $c_i$.
+\end{thm}
+\noindent La \textbf{consistenza locale media} di $p \in \mathcal{K}$ è data da
+\begin{displaymath}
+	A(\vec{p}) = \sum_i \sum_\lambda p_i(\lambda) q_i(\lambda; \vec{p})
+\end{displaymath}
+per la quale si dimostra il seguente risultato.
+\begin{thm}[R. A. Hummel, S. W. Zucker, 1983]
+	Se la matrice di compatibilità $\mat{R}$ è simmetrica, ovvero $r_{ij}(\lambda, \mu) = r_{ji}(\mu, \lambda)$, allora ogni massimizzatore locale $\vec{p} \in \mathcal{K}$ di $A$ è consistente.
+\end{thm}
+
+\noindent Inoltre, se $p \in \mathcal{K}$ è strettamente consistente e $\mat{R}$ è simmetrica, si può dimostrare che $\vec{p}$ è un massimizzatore locale stretto di $A$.
+\begin{thm}[M. Pelillo, 1997]
+	Se la matrice di compatibilità $\vec{R}$ è simmetrica, il processo di rilassamento incrementa in maniera stretta la consistenza locale media ad ogni iterazione, ovvero $A(\vec{p}^{(t + 1)}) > A(\vec{p}^{(t)})$ fino al raggiungimento di un punto stazionario.
+\end{thm}
+\begin{thm}[T. Elfving, J. O. Eklundh, 1982 \& M. Pelillo, 1997]
+	Sia $\vec{p} \in \mathcal{K}$ un etichettamento strettamente consistente, allora $\vec{p}$ è un punto di equilibrio asintoticamente stabile per il processo di rilassamento, independentemente dal fatto che la matrice $\mat{R}$ sia simmetrica o meno.
+\end{thm}
+
+\subsection{Relaxation labelling come gioco}
+
+Il problema dell'etichettamento consistente è equivalente a un polymatrix game dove:
+\begin{itemize}
+	\item i giocatori sono gli oggetti;
+	\item le etichette sono le strategie pure;
+	\item gli assegnamenti pesati corrispondono alle strategia miste;
+	\item la matrice di compatibilità è la matrice di payoff.
+\end{itemize}
+In questo gioco gli equilibri di Nash (stretti) corrispondono ad etichettamenti (strettamente) consistenti.
+
+\subsection{Apprendimento dei coefficienti di compatibilità}
+
+Si supponga di avere a disposizione un insieme di campioni
+\begin{displaymath}
+	L = \{L_1, \dots, L_N\}
+\end{displaymath}
+dove $L_\gamma$ è un insieme di oggetti etichettati del tipo:
+\begin{displaymath}
+	L_\gamma = \{(b_i^\gamma, \lambda_i^\gamma) : 1 \leq i \leq n_\gamma, b_i^\gamma \in B, \lambda_i^\gamma \in \Lambda\}
+\end{displaymath}
+Indichiamo con $\vec{p}^{(L_\gamma)}$ l'assegnamento non ambiguo di etichette agli oggetti in $L_\gamma$, dove:
+\begin{displaymath}
+	p_{i \alpha}^{(L_\gamma)} = \begin{cases}
+ 		1 & \text{se } \alpha = \lambda_i^\gamma \\
+ 		0 & \text{altrimenti}
+ 	\end{cases}
+\end{displaymath}
+Indichiamo inoltre con $\vec{p}^{(I_\gamma)}$ un etichettamento iniziale degli oggetti sulla base delle informazioni in $L_\gamma$ e $\vec{p}^{(F_\gamma)}$ l'etichettamento prodotto dall'algoritmo di rilassamento con $\vec{p}^{(I_\gamma)}$ in input: si noti che $\vec{p}^{(F_\gamma)}$ non deve necessariamente essere un punto fisso del processo di rilassamento.
+
+L'idea per ricavare $\mat{R}$ è di definire una \textbf{funzione di errore} che misuri la \emph{perdita} subita quando si ottiene in output $\vec{p}^{(F_\gamma)}$ anziché $\vec{p}^{(L_\gamma)}$, al fine di minimizzarla. Si può ad esempio adottare una funzione \textbf{quadratica}
+\begin{displaymath}
+	E_\gamma^{(Q)}(\mat{R}) = \sum_{i = 1}^{n_\gamma} \sum_{j = \lambda_1}^{\lambda_m} (p_{ij}^{(F_\gamma)}(\mat{R}) - p_{ij}^{(L_\gamma)})^2
+\end{displaymath}
+dove l'\textbf{errore totale} commesso è
+\begin{displaymath}
+	E^{(Q)}(\mat{R}) = \sum_{\gamma = 1}^N E_\gamma^{(Q)}(\mat{R})
+\end{displaymath}
+o, in alternativa, si può usare una funzione \textbf{logaritmica} del tipo
+\begin{displaymath}
+	E_\gamma^{(I)} = - \sum_{i = 1}^{n_\gamma} \log p_{i \lambda_i^\gamma}^{(F_\gamma)}(\mat{R})
+\end{displaymath}
+con errore totale
+\begin{displaymath}
+	E^{(I)}(\mat{R}) = \sum_{\gamma = 1}^N E_\gamma^{(I)}(\mat{R})
+\end{displaymath}
+Per risolvere il problema di minimizzazione si può usare il metodo di \textbf{proiezione del gradiente} di Rosen, un'estensione del metodo di discesa del gradiente ai problemi con vincoli lineari.
+
+\section{Trasduzione di grafi}
+\label{sec:trasduzione_di_grafi}
+
+La \textbf{trasduzione di grafi} è una classe di tecniche di \textbf{apprendimento semi-supervisionato} che mirano a stimare la funzione di classificazione definita su un grafo di nodi classificati e non. L'idea è di propogare in maniera consistente l'informazione appresa nei nodi etichettati a quelli non etichettati.
+
+Supponiamo che sia dato un dataset $D = \{D_l, D_u\}$ dove
+\begin{itemize}
+	\item $D_l = \{(x_1, y_1), \dots, (x_l, y_l)\}$ sono gli oggetti etichettati, con $Y$ l'insieme delle etichette;
+	\item $D_u = \{x_{l + 1}, \dots, x_n\}$ sono gli oggetti non etichettati;
+\end{itemize}
+con $l \ll n$.
+
+Le relazioni tra questi oggetti sono date da un grafo pesato non orientato $G~=~(V, E, w)$ dove i vertici rappresentano gli oggetti e i pesi degli archi rappresentano la similarità tra le coppie di nodi.
+
+Nel caso di matrice di adiacenza \textbf{binaria}, il problema della trasduzione può essere formulato come un \textbf{problema di soddisfacimento di vincoli} (CSP) dove:
+\begin{itemize}
+	\item $V = \{v_1, \dots, v_n\}$ è l'insieme delle variabili;
+	\item $D = \{D_{v_1}, \dots, D_{v_n}\}$ è l'insieme dei domini, con
+	\begin{displaymath}
+		D_{v_i} = \begin{cases}
+ 			\{y_i\} & \text{se } 1 \leq i \leq l \\
+ 			Y & \text{se } l + 1 \leq i \leq n
+ 		\end{cases}
+ 	\end{displaymath}
+ 	\item $R = \{R_{ij} : R_{ij} \subseteq D_{v_i} \times D_{v_j}\}$ è l'insieme dei vincoli binari, dove $R_{ij}$ contiene coppie di valori compatibili tra $v_i$ e $v_j$.
+\end{itemize}
+Il problema della trasduzione di grafi è una generalizzazione del CSP, dove ad ogni vincolo è assegnato un peso che ne descrive il livello di confidenza.
+
+\subsection{Graph transduction game}
+
+Il \textbf{graph transduction game} è un polymatrix game in cui i giocatori sono i vertici di un grafo ed ogni arco corrisponde ad un gioco tra i due giocatori connessi.
+
+In questo gioco ogni giocatore $i \in I$ corrisponde ad un elemento del dataset $D$ e può scegliere una strategia dall'insieme $S_i = \{1, \dots, c\}$, che esprime l'ipotesi di appartenenza a una certa classe, con $c$ il numero totali di classi.
+
+I giocatori possono essere suddivisi in due gruppi:
+\begin{itemize}
+	\item i \textbf{giocatori etichettati} $I_l = \{I_{l \mid 1}, \dots, I_{l \mid c}\}$ dove ogni sottoinsieme $I_{l \mid k}$ contiene i giocatori consapevoli di appartenere alla classe $k$ e dunque giocheranno sempre la loro $k$-esima strategia pura;
+	\item i \textbf{giocatori non etichettati} $I_u$.
+\end{itemize}
+In questo gioco, i giocatori $I_l$ non mirano a massimizzare il loro payoff, dal momento che hanno già scelto la loro strategia: si può dimostrare che il transduction game può essere ridotto a un gioco tra i soli giocatori $I_u$ dove le strategie dei giocatori $I_l$ agiscono da bias sulle scelte dei giocatori non etichettati.
+
+Il \textbf{payoff} di un giocatore $i \in I$, se viene giocato il profilo strategico misto $\vec{x}$, è dato dalla formula:
+\begin{displaymath}
+	u_i(\vec{x}) = \begin{cases}
+		\displaystyle\sum_{j \in I_u} (\mat{A}^{ij} \vec{x}_j)_h + \displaystyle\sum_{k = 1}^c \sum_{j \in I_{l \mid k}} a_{hk}^{ij} & \text{se } i \in I_{l \mid h} \\
+		\displaystyle\sum_{j \in I_u} \vec{x}_i^T \mat{A}^{ij} \vec{x}_j + \displaystyle\sum_{k = 1}^c \displaystyle\sum_{j \in I_{l \mid k}} (\vec{x}_i^T \mat{A}^{ij})_k & \text{se } i \in I_u
+	\end{cases}
+\end{displaymath}
+Data la matrice pesata $\mat{W} = (w_{ij})$, la \textbf{matrice di payoff parziale} tra i giocatori $i, j$ è $\mat{A}^{ij} = w_{ij} \mat{I}_c$.
+
+Si noti infine che, se sono ammesse solo strategie pure, il problema della trasduzione di grafi si riduce al CSP, dove un equilibrio di Nash corrisponde al caso in cui tutti i giocatori vicini giocano la medesima strategia pura al fine di ottenere il massimo supporto.
+
+Sperimentalmente si è verificato che si ottengono prestazioni migliori \textbf{normalizzando} la matrice dei pesi
+\begin{displaymath}
+	\widehat{\mat{W}} = \mat{D}^{-1/2} \mat{W} \mat{D}^{-1/2}
+\end{displaymath}
+con $\mat{D} = (d_{ij})$ matrice diagonale dove $d_{ii} = \sum_j w_{ij}$.
+
+Per il calcolo dell'equilibrio di Nash si usano le \textbf{dinamiche di replicazione}: raggiunta la convergenza, si assegna al giocatore $i \in I$ l'etichetta che ha la più alta probabilità nel suo equilibrio misto.

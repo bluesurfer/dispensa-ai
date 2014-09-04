@@ -1,24 +1,21 @@
 %!TEX root = ../main.tex
 
-\chapter{Ottimizzazione con le Reti Neurali} % (fold)
+\chapter{Ottimizzazione con le Reti Neurali}
 \label{cha:ottimizzazione_con_le_reti_neurali}
-In questo capitolo saranno introdotti alcuni famosi problemi NP-Difficili: il problema del commesso viaggiatore (TSP) e il problema della cricca massima (MCP). Dal momento che questi non sono risolvibili in tempo polinomiale, sarà fornita una formulazione alternativa del problema in modo tale da poter utilizzare tecniche di ottimizzazione per approssimare una soluzione.
+In questo capitolo saranno introdotti alcuni famosi problemi NP-difficili:\footnote{Un problema $P$ si dice \textbf{NP-difficile} se ogni problema $L \in NP$ è riducibile in tempo polinomiale a $P$. Un problema $P$ si dice \textbf{NP-completo} se $P \in NP$ ed è NP-difficile.} il problema del commesso viaggiatore (\emph{Traveling Salesman Problem}) e il problema della cricca massima (\emph{Maximum Clique Problem}). Dal momento che questi problemi non sono risolvibili in tempo polinomiale, sarà fornita una formulazione alternativa in modo tale da poter utilizzare tecniche di ottimizzazione continua per approssimare una soluzione.
 
-\section{Problema del commesso viaggiatore} % (fold)
+\section{Problema del commesso viaggiatore}
 \label{sec:problema_del_commesso_viaggiatore}
-Il problema del commesso viaggiatore (in inglese “travelling salesman problem”) nasce dalla sua più tipica rappresentazione: data una rete di città, connesse tramite delle strade, trovare il percorso di minore lunghezza che un commesso viaggiatore deve seguire per visitare tutte le città una e una sola volta per poi tornare alla città di partenza.\\
 
-Il problema è di considerevole importanza pratica, al di là delle ovvie applicazioni nella logistica e nei trasporti.
+Il \textbf{problema del commesso viaggiatore} è il seguente: data una rete di città, trovare il percorso di lunghezza minima che un commesso viaggiatore deve seguire per visitare tutte le città una e una sola volta e poi tornare alla città di partenza.
 
+\subsection{Formalizzazione del problema}
 
-\subsection{Formulazione del problema} % (fold)
-\label{sub:formulazione_del_problema}
-Espresso nei termini della teoria dei grafi il TSP è così formulato: \emph{dato un grafo completo pesato $G=(V, E, w)$, trovare il cammino di costo minore visitando tutti i nodi $V$ una sola volta e tornando al nodo di partenza.}\\
-
-La rete di città può essere rappresentata come un grafo in cui le città sono i nodi $V$, le strade gli archi $E$ e le distanze i pesi sugli archi $w$. La differenza sostanziale rispetto al Ciclo Hamiltoniano si trova nel fatto che quest'ultimo è formulato su di un grafo privo di pesi. Il problema è NP-completo: per poter trovare il percorso minimo è necessario elencare tutti gli \textbf{$n!$} percorsi.
-
-\newpage
-
+La rete di città può essere rappresentata mediante un grafo completo pesato $G = (V, E, w)$ dove $V$ è l'insieme delle città, $E$ l'insieme delle strade che le collegano e $w$ la funzione peso che assegna ad ogni arco la distanza tra i nodi corrispondenti. Il problema può dunque essere formalizzato come segue:
+\begin{quote}
+	\emph{Dato un grafo completo pesato $G=(V, E, w)$, trovare il ciclo di costo minimo (di lunghezza $|V|$) che tocchi tutti i nodi in $V$ una sola volta.}
+\end{quote}
+\vspace{-10pt}
 \begin{figure}[h!]
 	\centering
 	\begin{tikzpicture}
@@ -41,13 +38,12 @@ La rete di città può essere rappresentata come un grafo in cui le città sono 
 	\caption{Grafo completo pesato.}\label{fig:graph}
 \end{figure}
 
-% subsection formulazione_del_problema (end)
-
-\subsection{Soluzione del TSP con le reti di Hopfield} % (fold)
+\subsection{Soluzione del TSP con le reti di Hopfield}
 \label{sub:soluzione_del_tsp_con_le_reti_di_hopfield}
-È possibile affrontare questo problema utilizzando le reti di Hopfield. Per fare ciò è necessario \emph{trovare una funzione di energia $E$ adeguata in modo tale che il minimo corrisponda alla soluzione del problema che si sta affrontando.}\\
 
-Per prima cosa è necessario rappresentare il TSP attraverso una matrice di permutazione per identificare un percorso. Ad esempio dato il grafo in Figura~\ref{fig:graph}, il percorso $B \rightarrow A \rightarrow C \rightarrow D$ può essere rappresentato con la seguente matrice:\\
+Per affrontare il problema utilizzando le reti di Hopfield è necessario trovare una \textbf{funzione di energia} adeguata, in modo tale che il minimo corrisponda alla soluzione del problema che si sta affrontando.
+
+Per rappresentare il percorso si può usare una \textbf{matrice di permutazione}: dato il grafo in figura~\ref{fig:graph}, il percorso $B \rightarrow A \rightarrow C \rightarrow D$ può essere rappresentato con la matrice in tabella~\ref{tab:matperm}.
 
 \begin{table}[h!]
 	\centering
@@ -62,29 +58,23 @@ Per prima cosa è necessario rappresentare il TSP attraverso una matrice di perm
 		\bottomrule
 	\end{tabularx}
 	\caption{Matrice di permutazione del percorso BACD}
+	\label{tab:matperm}
 \end{table}
 
-Dunque per $n$ città saranno necessari $n \times n$ neuroni nella rete di Hopfield in cui ogni neurone identifica una città e una fermata.
-
-\newpage
-
-La soluzione del problema sarà dunque una matrice $V$ di dimensione $n \times n$. Si introducono ora alcune notazioni:
+\noindent Per $n$ città sono quindi necessari $n^2$ neuroni nella rete di Hopfield, in cui ogni neurone identifica una città e una fermata. Introduciamo ora alcune notazioni:
 \begin{itemize}
-	\item $X$ indica la città;
+	\item $X$ indica una città;
 	\item $i$ una fermata in cui è visitata una città;
 	\item $V_{X,i}$ è l'output dell'unità $X, i$;
 	\item $T_{Xi, Yj}$ sono i pesi delle connessioni;
-	\item $V_{X,i} = 1$ se la città $X$ è visitata alla fermata $i$;
+	\item $V_{X,i} = 1$ se la città $X$ è visitata alla fermata $i$, $0$ altrimenti;
 	\item $d_{X,Y}$ distanza tra la città $X$ e $Y$.
 \end{itemize}
-
-Si definisce ora la funzione obiettivo da minimizzare che rappresenta il costo totale del cammino:
+La funzione che rappresenta il costo totale del cammino è
 \begin{align*}
 	E_1  = \frac{D}{2} \sum_X \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i} (V_{Y, i-1} + V_{Y, i+1})
 \end{align*}
-dove $D$ è una costante e gli indici sono intesi modulo $n$. La matrice $V$ senza vincoli di alcun genere può descrivere zero o più percorsi di lunghezza arbitraria (quindi può anche non toccare tutte le città).
-Se la matrice $V$ descrivesse solo percorsi unici Hamiltoniani, allora minimizzando la funzione costo $E_1$ otterremmo la soluzione. Tuttavia il problema del commesso viaggiatore presenta una serie di \textbf{vincoli} che devono essere rispettati dalla matrice $V$.
-
+dove $D$ è una costante positiva e gli indici sono intesi modulo $n$.
 
 \begin{figure}[h!]
 	\centering
@@ -131,53 +121,40 @@ Se la matrice $V$ descrivesse solo percorsi unici Hamiltoniani, allora minimizza
 	\caption{Interpretazione grafica di $E_1$}
 \end{figure}
 
-
-\newpage
-
-
-Di seguito si riportano i vincoli per il TSP:
-
-\begin{enumerate}
-	\item \textbf{Vincolo sulle righe}: Ogni città deve essere visitata una sola volta. Ovvero le righe della matrice $V$ devono avere soltanto un elemento impostato ad 1, il resto a 0;
-	\begin{align*}
+Per imporre i vincoli richiesti dal problema del commesso viaggiatore si introducono le seguenti funzioni di energia, che sono minimizzate quando i vincoli corrispondenti sono verificati.
+\begin{itemize}
+	\item \textbf{Vincolo sulle righe}. Ogni città deve essere visitata al più una sola volta:
+	\begin{displaymath}
 		E_2 = \frac{A}{2} \sum_X \sum_i \sum_{j \neq i} V_{X,i} V_{X,j}
-	\end{align*}
-	che vale 0 (il minimo) se ogni città è visitata al massimo una volta.
-	\item \textbf{Vincolo sulle colonne}: Ogni fermata deve contenere una città, ovvero ogni colonna della matrice $V$ abbia un elemento impostato ad 1 ed il resto a 0;
-	\begin{align*}
+	\end{displaymath}
+	\item \textbf{Vincolo sulle colonne}. In una fermata si visita al più una città:
+	\begin{displaymath}
 		E_3 = \frac{B}{2} \sum_i \sum_X \sum_{Y \neq X} V_{X,i} V_{Y,i}
-	\end{align*}
-	che vale 0 se ogni step del tour contiene al massimo una città.
-	\item \textbf{Vincolo sulle entrate}: in totale devono essere attraversate $n$ città.
-	\begin{align*}
+	\end{displaymath}
+	\item \textbf{Vincolo sulle entrate}. Devono essere attraversate esattamente $n$ città:
+	\begin{displaymath}
 		E_4 = \frac{C}{2}\left(\sum_X \sum_i V_{X,i} - n \right)^2
-	\end{align*}
-	che vale 0 se il numero di città attraversate è esattamente $n$.
-\end{enumerate}
-
-Ci si trova dunque con quattro funzioni energia da minimizzare, tuttavia per poter utilizzare una rete di Hopfield è necessaria un'unica funzione. Per questo motivo si esprime la funzione costo totale come combinazione lineare delle funzioni energia $E_i$:
+	\end{displaymath}
+\end{itemize}
+Abbiamo quattro funzioni energia da minimizzare, tuttavia per poter utilizzare una rete di Hopfield è necessaria un'unica funzione: per questo motivo si esprime la funzione di costo totale come combinazione lineare delle funzioni energia $E_i$:
 \begin{align}
 	E = E_1 + E_2 + E_3 + E_4
 \end{align}
-dove il peso da attribuire a ciascun termine è determinato dalle costanti positive $A, B, C, D$. La funzione energia risultante dovrà essere della forma tipica di una rete di Hopfield ovvero nella forma dell'Equazione~\eqref{eq:energy}:
+dove il peso da attribuire a ciascun termine è determinato dalle costanti positive $A, B, C, D$. C'è un ultimo problema da risolvere, ovvero la funzione energia dovrà essere della forma tipica di una rete di Hopfield:
 \begin{align*}
-	E = - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{X_i, Y_j} V_{X_i} V_{Y_j} - \sum_{X_i} I_{X_i} V_{X_i}
+	E = - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{Xi, Yj} V_{X, i} V_{Y, j} - \sum_{X, i} I_{X, i} V_{X, i}
 \end{align*}
-
-\newpage
-
-Per ricondursi alla funzione energia tipica di Hopfield si utilizza un “trucco”: si introduce il seguente termine:
+Per farlo, si introduce il termine
 \begin{align*}
-	\delta_{i,j} =
-	\begin{cases}
-		1, &\text{ se } i = j\\
-		0, &\text{ se } i \neq j \\
+	\delta_{i,j} = \begin{cases}
+		1 & \text{se } i = j \\
+		0 & \text{altrimenti}
 	\end{cases}
 \end{align*}
-Le funzioni energia si possono ora riscrivere nel seguente modo:
+e si riscrivono le funzioni $E_i$ come segue:
 \begin{align*}
 	E_1 &= \frac{D}{2} \sum_X \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i} (V_{Y, i+1} + V_{Y, i-1}) \\
-	&=  \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} \cdot (\delta_{j, i-1} + \delta_{j, i+1})
+	&=  \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} (\delta_{j, i-1} + \delta_{j, i+1})
 \end{align*}
 
 \begin{align*}
@@ -192,105 +169,93 @@ Le funzioni energia si possono ora riscrivere nel seguente modo:
 
 \begin{align*}
 	E_4 &= \frac{C}{2}\left(\sum_X \sum_i V_{X,i} - n \right)^2 \\
-	&= \frac{C}{2} \left(\left(\sum_X \sum_i V_{X,i}\right)^2 - 2n \cdot \sum_X \sum_i V_{X,i} + n^2 \right)
+	&= \frac{C}{2} \left(\left(\sum_X \sum_i V_{X,i}\right)^2 - 2n \sum_X \sum_i V_{X,i} + n^2 \right)
 \end{align*}
 dove
 \begin{align*}
-	\left(\sum_X \sum_i V_{X,i}\right)^2 &= \left(\sum_X \sum_i V_{X,i}\right) \cdot \left(\sum_X \sum_i V_{X,i} \right) \\
+	\left(\sum_X \sum_i V_{X,i}\right)^2 &= \left(\sum_X \sum_i V_{X,i}\right) \left(\sum_X \sum_i V_{X,i} \right) \\
 	&= \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j}
 \end{align*}
 
 \newpage
 
-In $E_4$ il termine costante $n^2$ si può tralasciare, in quanto non modifica il punto in cui si ottiene il minimo, ma il valore della funzione $E_4$ in corrispondenza del minimo.
-Mettendo il tutto assieme si ottiene la \textbf{funzione di energia totale}:
+\noindent In $E_4$ il termine costante $n^2$ si può tralasciare, in quanto influenza solamente il valore della funzione $E_4$ in corrispondenza del minimo, ma non la sua posizione. Mettendo il tutto assieme si ottiene la \textbf{funzione di energia totale}
 \begin{align*}
 	E &= \frac{A}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{X,Y} (1 - \delta_{i,j}) \\
 	&+ \frac{B}{2} \sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} \delta_{i,j} (1 - \delta_{X,Y}) \\
-	&+ \frac{C}{2} \left(\sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} - \sum_{X,i} V_{X,i} \right) \\
-	&+ \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} \cdot (\delta_{j, i-1} + \delta_{j, i+1}) \\
-	&= - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{X_i, Y_j} V_{X_i} V_{Y_j} - \sum_{X_i} I_{X_i} V_{X_i}
+	&+ \frac{C}{2} \left(\sum_{X,Y} \sum_{i,j} V_{X,i} V_{Y,j} - 2n \sum_{X,i} V_{X,i} \right) \\
+	&+ \frac{D}{2} \sum_{X,Y} \sum_{i,j} d_{X,Y} V_{X,i} V_{Y,j} (\delta_{j, i-1} + \delta_{j, i+1}) \\
+	&= - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{Xi, Yj} V_{X, i} V_{Y, j} - \sum_{X, i} I_{X, i} V_{X, i}
 \end{align*}
-Dove $T_{Xi, Yj}$ sono i pesi che la rete deve scoprire:
+dove $T_{Xi, Yj}$ sono dati da
 \begin{align*}
-	T_{Xi, Yj} &= - A \delta_{XY} (1 - \delta_{ij}) \tag{peso inibitorio in ogni riga}\\
-	& - B \delta_{ij} (1 - \delta_{XY}) \tag{peso inibitorio in ogni colonna} \\
-	& - C  \qquad \tag{Inibizione globale}\\
-	& - D d_{XY} (\delta_{j,i-1} + \delta_{j, i+1}) \tag{Termine dei dati}
+	-T_{Xi, Yj} &= A \delta_{XY} (1 - \delta_{ij}) \tag{Peso inibitorio in ogni riga}\\
+	& +B \delta_{ij} (1 - \delta_{XY}) \tag{Peso inibitorio in ogni colonna} \\
+	& +C  \qquad \tag{Inibizione globale}\\
+	& +D d_{XY} (\delta_{j,i-1} + \delta_{j, i+1}) \tag{Costo del cammino minimo}
 \end{align*}
-e il vettore di corrente esterna $I$ ha come $Xi$-esima componente:
+e il vettore di corrente esterna $\vec{I}$ ha come $Xi$-esima componente
 \begin{align*}
-	I_{Xi} = C_n \tag{Corrente esterna eccitatoria}
+	I_{X, i} = nC\tag{Corrente esterna eccitatoria}
 \end{align*}
-% subsection soluzione_del_tsp_con_le_reti_di_hopfield (end)
 
-\newpage
-
-\subsection{Un'altra formulazione} % (fold)
+\subsection{Un'altra formulazione}
 \label{sub:un_altra_formulazione}
-La determinazione dei parametri $A, B, C, D$ è particolarmente difficile. Pertanto un altro modo per esprimere i vincoli del TSP (cioè la matrice di permutazione $V$) è il seguente:
+
+Determinare i parametri $A, B, C, D$ è particolarmente difficile. Un altro modo per esprimere i vincoli del TSP, che richiede di determinare un parametro in meno è il seguente:
 \begin{align*}
 	E_2 = \frac{A}{2} \sum_X \left(\sum_i V_{X, i} - 1 \right) ^ 2 \tag{Vincolo sulle righe} \\
 	E_3 = \frac{B}{2} \sum_i \left(\sum_X V_{X, i} - 1 \right) ^ 2 \tag{Vincolo sulle colonne} \\
 \end{align*}
-Quindi la funzione energia diventa:
+La funzione energia diventa:
 \begin{align*}
 	E = \frac{D}{2} \sum_{X} \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i}(V_{Y, i + 1} + V_{Y, i - 1}) + E_2 + E_3
 \end{align*}
-Dal momento che $E_4$ non è usato abbiamo tre parametri anziché quattro.
-% subsection un_altra_formulazione (end)
 
-
-\subsection{Problema delle n regine} % (fold)
+\subsection{Problema delle N regine}
 \label{sub:problema_delle_n_regine}
-Una famosa variante del TSP è il \emph{problema delle n regine}. Si immagini una scacchiera $n \times n$ e $n$ regine; una regina può muoversi lungo le righe, le colonne e le diagonali. Il problema consiste nel posizionare questi $n$ pezzi in modo tale che nessuno di essi possa attaccarsi l'uno contro l'altro.\\
 
-Si può costruire una rete di Hopfield $n \times n$ in cui il neurone $(i,j)$ è attivo se e solo se una regina occupa la posizione $(i,j)$. Ci sono inoltre quattro vincoli:
-\begin{enumerate}
+Una famosa variante del TSP è il \textbf{problema delle N regine}: data una scacchiera $N \times N$ e $N$ regine, si vogliono posizionare questi pezzi in modo tale che nessuno di essi possa attaccarne un altro.
+
+Si può costruire una rete di Hopfield $N \times N$ in cui il neurone $(i,j)$ è attivo se e solo se una regina occupa la posizione $(i,j)$, con i seguenti vincoli:
+\begin{itemize}
 	\item solo una regina in ciascuna riga;
 	\item solo una regina in ciascuna colonna;
 	\item solo una regina in ciascuna diagonale;
-	\item solo $n$ regine sulla scacchiera.
-\end{enumerate}
-
-
-\newpage
-
-Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La matrice dei pesi è quindi data da:
+	\item solo $N$ regine sulla scacchiera.
+\end{itemize}
+Il problema è analogo al TSP con l'aggiunta del vincolo sulle diagonali. La matrice dei pesi è la seguente:
 \begin{align*}
-	- T_{ij,kl} &= - A \delta_{ik} (1 - \delta_{ij}) \tag{peso inibitorio in ogni riga}\\
-	& + B \delta_{jl} (1 - \delta_{ik}) \tag{peso inibitorio in ogni colonna} \\
-	& + C  \qquad \tag{Inibizione globale}\\
-	& + D (\delta_{i+j,k-l} + \delta_{i-j, k-l})(1 - \delta_{ik}) \tag{peso inibitorio sulle diagonale}
+	- T_{ij,kl} &= A \delta_{ik} (1 - \delta_{jl}) \tag{Peso inibitorio in ogni riga}\\
+	& + B \delta_{jl} (1 - \delta_{ik}) \tag{Peso inibitorio in ogni colonna} \\
+	& + C \tag{Inibizione globale}\\
+	& + D (\delta_{i+j,k-l} + \delta_{i-j, k-l})(1 - \delta_{ik}) \tag{Peso inibitorio sulle diagonale}
 \end{align*}
 
-L'ottimizzazione tramite le reti di Hopfield presenta, tuttavia, alcuni svantaggi:
+\subsection{Conclusioni}
+
+L'ottimizzazione tramite le reti di Hopfield presenta alcuni svantaggi:
 \begin{enumerate}
 	\item sono necessari $n^2$ neuroni;
-	\item il numero di connessioni è e $O(n^4)$;
+	\item il numero di connessioni è $\mathcal{O}(n^4)$;
 	\item i parametri $A, B, C, D$ sono difficili da determinare;
 	\item i risultati ottenuti sono raramente soluzioni ammisibili, ovvero matrici binarie con i vincoli rispettati;
-	\item è difficile evitare il problema dei minimi locali.
+	\item è difficile evitare i minimi locali della funzione di energia.
 \end{enumerate}
-
-% subsection problema_delle_n_regine (end)
-% section problema_del_commesso_viaggiatore (end)
 
 \newpage
 
-\section{Problema della cricca massima} % (fold)
+\section{Problema della cricca massima}
 \label{sec:problema_della_cricca_massima}
 
-Sia $G=(V,E)$ un grafo non orientato con $V$ l'insieme dei vertici ed $E$ quello degli archi, tale per cui $V={1,\dots,n}$ e $E \subseteq V \times V$. Si definisce cricca (o clique) $C \subseteq V$, un sottoinsieme di vertici di G mutuamente adiacenti (che formano un grafo completo), ovvero tali che $\forall i,j \in C$ con $i \neq j, (i,j) \in E$.
-
+Sia $G=(V,E)$ un grafo non orientato: si definisce \textbf{cricca} (o \emph{clique}) un sottoinsieme $C \subseteq V$ di vertici mutuamente adiacenti, ovvero tali per cui $\forall i,j \in C$, se $i \neq j$, allora $(i,j) \in E$.
 \begin{mydef}[Clique massimale]
-	Si definisce \textbf{clique massimale} di $G$ una clique di $G$ che non è contenuta in nessun'altra clique di $G$.    
+	Si definisce \defterm{clique massimale} di $G$ una clique di $G$ che non è contenuta in nessun'altra clique di $G$.\footnote{Se $C$ è una clique massimale, allora ogni nodo $j \notin C$ è connesso a meno di $|C|$ nodi della clique. Se è connesso a meno di $|C| - 1$ nodi, la clique è massimale \textbf{stretta}.}
 \end{mydef}
-
 \begin{mydef}[Clique massima]
-	Si definisce \textbf{clique massima} di $G$ una clique massimale di G di cardinalità massima.
+	Si definisce \defterm{clique massima} di $G$ una clique massimale di G di cardinalità massima.
 \end{mydef}
-Il problema consiste nel trovare una cricca massimale (MCP). Ad esempio si consideri il seguente grafo:
+\noindent Il problema consiste nel trovare una cricca massima (MCP).
 
 \begin{figure}[h!]
 	\centering
@@ -303,51 +268,28 @@ Il problema consiste nel trovare una cricca massimale (MCP). Ad esempio si consi
 		\foreach \from / \to in {1/2,2/3,1/3,3/4}
 		\path (\from) edge (\to);
 	\end{tikzpicture}
-	\caption{Un grafo non orientato.}\label{fig:graph1}
+	\caption[Esempi di clique.]{$C_1 = \{1, 2, 3\}$ è massima e massimale, $C_2 = \{3, 4\}$ è massimale, \\ $C_3 = \{1, 2\}$ non è massimale ($C_3 \subseteq C_1$).}
 \end{figure}
-Alcune clique nel grafo sono:
-\begin{align*}
-	C_1 &= \{1,2\} \tag{$C_1$ non è massimale perché $C_1 \subseteq C_2$}\\
-	C_2 &= \{1,2,3\} \tag{Massimale e massima}\\
-	C_3 &= \{3,4\} \tag{Massimale}
-\end{align*}
 
-\newpage
+\noindent Trovare una clique massimale è un problema facile, mentre trovare quella massima è NP-completo, così come trovare la dimensione di tale clique. 
 
-Trovare una clique massimale è un problema facile, mentre trovare quella massima è NP-difficile, così come trovare la dimensione di tale clique. In questa sezione si affronta il problema sotto quest'ultimo punto di vista.
-
-\subsection{Formulazione continua di MCP} % (fold)
-Per affrontare il problema con le reti neurali è necessario trasformare MCP da problema discreto a problema continuo. Nell'esempio del TSP con il modello di Hopfield, non è detto che ci sia il percorso inverso (potremo ottenere ad esempio una matrice che non ha significato); in questo nuovo problema MCP, la bidirezionalità è d'obbligo.\\
-
-Si utilizza quindi un nuovo approccio, ma prima sono necessarie alcune notazioni:
+Prima di dare una formulazione continua del problema della cricca massima, sono necessarie alcune definizioni:
 \begin{itemize}
-	\item Se $C \subseteq V$, $x^C$ indica il \textbf{vettore caratteristico} definito come:
-	\begin{align*}
-		x^C_i = 
-		\begin{cases}
-			\displaystyle\frac{1}{|C|}, &\text{se }i \in C\\
-			0,  &\text {altrimenti}
+	\item Se $C \subseteq V$, $\vec{x}^C$ indica il \textbf{vettore caratteristico} di $C$:
+	\begin{displaymath}
+		x^C_i = \begin{cases}
+			\displaystyle\frac{1}{|C|} &\text{se }i \in C\\
+			0 &\text {altrimenti}
 		\end{cases}
-	\end{align*}
-	dove $|C|$ indica la cardinalità dell'insieme $C$ e $i \in \{ 1, \dots, |V|\}$
-	\item $S_n$ è il \textbf{simplesso standard} in $\mathbb{R}^n$:
-	\begin{align*}
-		S_n = \left\{x \in \mathbb{R}^n : \sum_{i=1}^n x_i = 1 \text{ e } x_i \geq 0, \forall i \right\}
-	\end{align*}
-	Per qualunque vettore caratteristico vale la relazione $x^C \in S_n$ con $n \geq |C|$
-	\item $A=(a_{ij})$ è la matrice di adiacenza di $G$:
-	\begin{align*}
-		a_{ij} =
-		\begin{cases}
-			1, &\text{ se } (i,j) \in E \\
-			0, &\text{ altrimenti}
-		\end{cases}
-	\end{align*}
+	\end{displaymath}
+	\item $\Delta$ è il \textbf{simplesso standard} in $\mathbb{R}^n$:
+	\begin{displaymath}
+		\Delta = \left\{\vec{x} \in \mathbb{R}^n : \sum_{i=1}^n x_i = 1 \text{ e } x_i \geq 0, \forall i \right\}
+	\end{displaymath}\newpage
+	\item $\mat{A} = (a_{ij})$ è la matrice di adiacenza binaria di $G$.
 \end{itemize}
 
-\newpage
-
-\begin{figure}[h!]
+\begin{figure}[t]
 	\centering
 	\begin{tikzpicture}[scale=2]
 
@@ -363,126 +305,77 @@ Si utilizza quindi un nuovo approccio, ma prima sono necessarie alcune notazioni
 		\node at (0,0.1,1.1) {1};
         
 	\end{tikzpicture}
-	\caption{Rappresentazione grafica del simplesso standard}
+	\caption{Simplesso standard in $\mathbb{R}^3$.}
 \end{figure}
 
-Si consideri la seguente funzione quadratica continua in $n$ variabili:
+\noindent Si consideri la seguente funzione quadratica detta \textbf{Lagrangiano del grafo}:
+\begin{displaymath}
+	f_G(\vec{x}) = \vec{x}^T \mat{A} \vec{x} = \sum_{i=1}^n \sum_{j=1}^n a_{ij} x_i x_j
+\end{displaymath}
+L'approccio tipico per risolvere il problema della cricca massima è quello di costruire un sistema dinamico che converga ai massimi di $f_G$ in $\Delta$: questi punti corrisponderanno alle soluzioni nello spazio discreto del problema originale. A tale scopo si introduce il teorema di Motzkin-Straus.
+\begin{thm}[T. S. Motzkin \& E. G. Straus, 1965]
+	Sia $\vec{x}^*$ un massimo globale di $f_G$ in $\Delta$, allora la cardinalità della clique massima di $G$ è legata a $f_G$ dalla seguente formula:
+	\begin{displaymath}
+		\omega(G) = \frac{1}{1 - f_G(\vec{x}^*)}
+	\end{displaymath}
+	Inoltre un sottoinsieme di vertici $C$ è una clique massima se e solo se il suo vettore caratteristico $\vec{x}^C \in \Delta$ è un massimo globale per $f_G$ in $\Delta$.
+\end{thm} 
+\noindent Purtroppo non tutti i massimizzatori di $f_G$ sono nella forma di vettori caratteristici, pertanto possono essere usati solo per ottenere la cardinalità della cricca massima, ma non i vertici che la compongono: questi massimizzatori sono detti \textbf{soluzioni spurie}.
+
+Ad esempio, il grafo in figura \ref{fig:grafoesempio} contiene due clique massime:
 \begin{align*}
-	&f_G(x) = x^T A x = \sum_{i=1}^n \sum_{j=1}^n a_{ij} x_i x_j \tag{Lagrangiano del grafo} \\
-	&\text{oppure } f_G(\bar{x}) = \sum_{(i,j) \in E} x_i x_j
-\end{align*}
-dove $x^T$ è il vettore trasposto e $A$ è la matrice di adiacenza. Ad esempio se si considera il grafo in Figura~\ref{fig:graph1} allora:
-\begin{align*}
-	f_G(x) = x_1 x_2 + x_1 x_3 + x_2 x_3 + x_3 x_4
+	C_1 &= \{1,2\} & \vec{x}^{C_1} &= (1 / 2, 1 / 2, 0) \\
+	C_2 &= \{1,3\} & \vec{x}^{C_2} &= (1 / 2, 0, 1 / 2)
 \end{align*}
 
-È stata dunque definita una funzione continua che rappresenta il problema: il Lagrangiano del grafo. A questo punto l'approccio tipico per risolvere MCP è quello di costruire un sistema dinamico che converga ai massimi di tale funzione. Questi punti corrisponderanno alle soluzioni nello spazio discreto del problema originale. A tale scopo si introduce il teorema di Motzkin-Strauss.
-\begin{thm}[Teorema di Motzkin-Strauss]
-	Sia $x^*$ un massimo globale di $f_G$ in $x \in S_n$ allora la cardinalità della clique massima è legata a $f_G(x)$  dalla seguente formula:
-	\begin{align*}
-		\omega(G) = \frac{1}{1 - f(x^*)}
-	\end{align*}
-	Inoltre un sottoinsieme di vertici $C$ è una clique massima se e solo se il suo vettore caratteristico $x^C \in S_n$ è un massimo globale per $f_G$ in $S_n$.
-	\end{thm} 
-	\newpage
-
-	Il teorema di Motzkin-Strauss fornisce una connessione tra la cardinalità della clique massima $\omega(G)$ di un grafo $G$ con $n$ vertici e il massimo del suo Lagrangiano definito nel simplesso standard di $\mathbb{R}^n$. In particolare è stato mostrato che una clique $C$ è massima se e solo se il suo vettore caratteristico $x^C$ è un massimizzatore globale della funzione $f_G$ su $S_n$.\\
-
-	Tuttavia non tutti i massimizzatori di $f_G$ sono nella forma di vettori caratteristici e pertanto non possono essere utilizzati direttamente per ricavare informazioni sulle clique massime. Tali massimizzatori sono definiti \emph{soluzioni spurie}. Ad esempio, si consideri il seguente grafo:
-
-	\begin{figure}[h!]
-		\centering
-		\begin{tikzpicture}
-			\node[circle,fill=blue!20] (1) at (0,1.5) {1};
-			\node[circle,fill=blue!20] (2) at (-1.5,0) {2};
-			\node[circle,fill=blue!20] (3) at (1.5,0) {3};
+\begin{figure}[h!]
+	\centering
+	\begin{tikzpicture}
+		\node[circle,fill=blue!20] (1) at (0,1.5) {1};
+		\node[circle,fill=blue!20] (2) at (-1.5,0) {2};
+		\node[circle,fill=blue!20] (3) at (1.5,0) {3};
         
-			\draw (1) -- (2);
-			\draw (1) -- (3);
+		\draw (1) -- (2);
+		\draw (1) -- (3);
         
-		\end{tikzpicture}
-		\caption{Grafo esempio.}
-	\end{figure}
-	Il grafo presenta due massimi globali:
-	\begin{align*}
-		C_1 = \{1,2\} \qquad  x^{C_1} = (1 / 2, 1 / 2, 0) \\
-		C_2 = \{1,3 \} \qquad x^{C_2} = (1 / 2, 0, 1 / 2)
-	\end{align*}
+	\end{tikzpicture}
+	\caption{Grafo di esempio.}
+	\label{fig:grafoesempio}
+\end{figure}
 
-	Tuttavia come si evince dal seguente grafico, sono massimi globali anche tutti i punti del segmento $x'x''$ ovvero tutti i punti in $(1/2, \alpha / 2, (1 - \alpha) / 2) \, \forall \alpha \in [0,1]$.
-	\begin{figure}[h!]
-		\centering
-		\begin{tikzpicture}[scale=2]
-			%draw the main coordinate system axes
-			\draw[thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
-			\draw[thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
-			\draw[thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
+\noindent Tuttavia, come si può vedere dal seguente grafico, sono massimi globali tutti i punti interni al segmento $\vec{x}^{C_1}\vec{x}^{C_2}$ ovvero i punti $(1/2, \alpha / 2, (1 - \alpha) / 2)$ con $\alpha \in (0,1)$: tuttavia, poiché non sono nella forma di vettori caratteristici, non possono essere usati per estrarre informazioni sui componenti delle clique massime.
+\begin{figure}[h!]
+	\centering
+	\begin{tikzpicture}[scale=2]
+		%draw the main coordinate system axes
+		\draw[thick,->] (0,0,0) -- (1.5,0,0) node[anchor=north east]{$x$};
+		\draw[thick,->] (0,0,0) -- (0,1.5,0) node[anchor=north west]{$y$};
+		\draw[thick,->] (0,0,0) -- (0,0,1.5) node[anchor=south]{$z$};
         
-			\draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
-			\draw[color=blue, very thick] (.5, .5, 0) -- (0,.5,.5);
+		\draw[thick, color=green, very thick] plot coordinates{(0,0,1) (0,1,0) (1,0,0) (0,0,1)};
+		\draw[color=blue, very thick] (.5, .5, 0) -- (0,.5,.5);
         
-			\node at (.5,.6,0) {$x'$};
-			\node at (0,.6,.5) {$x''$};
+		\node at (.7,.6,0) {$\vec{x}^{C_1}$};
+		\node at (-.15,.55,.55) {$\vec{x}^{C_2}$};
         
-			\node at (1.1,0.1,0) {1};
-			\node at (0.1,1.1,0) {1};
-			\node at (0,0.1,1.1) {1};
+		\node at (1.1,0.1,0) {1};
+		\node at (0.1,1.1,0) {1};
+		\node at (0,0.1,1.1) {1};
         
-		\end{tikzpicture}
-		\caption{Soluzioni spurie in MCP}
-	\end{figure}
+	\end{tikzpicture}
+	\caption{Soluzioni spurie in MCP}
+\end{figure}
 
-	Dunque $x'$ e $x''$ \textbf{non} sono vettori caratteristici e non possono essere utilizzati per la soluzione del MCP.
+\noindent Il problema delle soluzioni spurie è stato risolto da Bomze proponendo una versione regolarizzata di $f_G(\vec{x})$:
+\begin{displaymath}
+	\hat{f}_G(\vec{x}) = \vec{x}^T \left(\mat{A} + \frac{1}{2} \mat{I}_{|V|} \right) \vec{x} 
+\end{displaymath}
 
-	\newpage
-
-	Quello che è stato fatto finora è prendere il problema $P$ di clique massima nel discreto e trasformarlo in un problema $P'$ di ottimizzazione quadratica nel continuo. A questo punto è necessario mappare la soluzione del problema $P'$ in una soluzione del problema originale $P$.  Questo è possibile se la soluzione ottenuta in $P'$ è un vettore caratteristico.\\
-
-	Il problema delle soluzioni spurie è stato risolto da Immanuel Bomze (1995) proponendo una versione regolarizzata di $f_G(x)$. La soluzione consiste nel sommare $1/2$ alla diagonale principale della matrice di adiacenza $A$.
-	\begin{align*}
-		A' = A + \frac{1}{2} I
-	\end{align*}
-	Da cui si ottiene:
-	\begin{align*}
-		\hat{f}_G(x) = x^T A' x = x^T \left( A + \frac{1}{2} I \right) x 
-	\end{align*}
-	Dove I è la matrice identità, ovvero una matrice quadrata dello stesso lato di $A$ con tutti gli elementi in diagonale principale ad 1 e tutti gli elementi al di fuori di essa a 0.\\
-
-
-	\begin{figure}[h!]
-		\centering
-		\begin{tikzpicture}
-			\node[circle,fill=blue!20] (1) at (0,1.5) {1};
-			\node[circle,fill=blue!20] (2) at (-1.5,0) {2};
-			\node[circle,fill=blue!20] (3) at (1.5,0) {3};
-        
-			\path
-			(1) edge (2)
-			(1) edge (3)
-			(1) edge[loop above] node{$1/2$} (1)
-			(2) edge[loop left] node{$1/2$} (2)
-			(3) edge[loop right] node{$1/2$} (3)
-			;
-		\end{tikzpicture}
-		\caption{Soluzione problema delle soluzioni spurie (Bomze).}
-	\end{figure}
-
-	Riassumendo il problema della cricca massima dato un grafo $G = (V, E)$ è definito nel seguente modo:
-	\begin{align*}
-		\max(\hat{f}_G(x)) \text{ tale che } x \in S_n
-	\end{align*}
-	Sia $C \subseteq V$ e sia $x^C$ il suo vettore caratteristico allora:
-	\begin{enumerate}
-		\item $C$ è una clique massima di $G$ sse $x^C$ è un massimo globale di $\hat{f} \in S_n$;
-		\item $C$ è una clique massimale di $G$ sse $x^C$ è un massimo locale di $\hat{f} \in S_n$;
+\begin{thm}[I. M. Bomze, 1995]
+	Sia $C \subseteq V$ e sia $\vec{x}^C$ il suo vettore caratteristico, allora:
+	\begin{itemize}
+		\item $C$ è una clique massima di $G$ se e solo se $\vec{x}^C$ è un massimo globale di $\hat{f}_G$ in $\Delta$;
+		\item $C$ è una clique massimale di $G$ se e solo se $\vec{x}^C$ è un massimo locale di $\hat{f}_G$ in $\Delta$;
 		\item ogni massimo locale è un vettore caratteristico ed è locale stretto. 
-	\end{enumerate}
-
-	\newpage
-
-	Il risultato precedente garantisce che \emph{tutti} i massimizzatori di $\hat{f}$ su $S_n$ sono stretti, e sono sono vettori caratteristici di clique massima/massimale in un grafo. In particolare esiste una corrispondenza uno-a-uno da una parte tra le clique massimali e massimizzatori locali di $\hat{f}$ su $S_n$, dall'altra tra clique massima e massimizzatore globale.
-
-	% section problema_della_cricca_massima (end)
-
-
-	% chapter ottimizzazione_con_le_reti_neurali (end)
+	\end{itemize}
+\end{thm}

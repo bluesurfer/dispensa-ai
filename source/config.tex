@@ -19,14 +19,14 @@
 
 \newcommand{\myTitle}{Dispensa di Intelligenza Artificiale\xspace}
 \newcommand{\mySubtitle}{Appunti del corso di Intelligenza Artificiale\xspace}
-\newcommand{\myName}{Andrea Casini \xspace}
+\newcommand{\myName}{Andrea Casini \& Mauro Tempesta \xspace}
 \newcommand{\myProf}{Marcello Pelillo\xspace}
 \newcommand{\myOtherProf}{Put name here\xspace}
 \newcommand{\mySupervisor}{Put name here\xspace}
 \newcommand{\myFaculty}{Laurea Specialistica in Informatica\xspace}
 \newcommand{\myUni}{Universit\`a Ca' Foscari di Venezia\xspace}
 \newcommand{\myTime}{\today\xspace}
-\newcommand{\myVersion}{versione 0.9\xspace}
+\newcommand{\myVersion}{versione 1.5\xspace}
 
 %----------------------------------------------------------------------------------------
 %	USEFUL COMMANDS
@@ -116,7 +116,7 @@
 \setlength{\extrarowheight}{3pt} % Increase table row height
 \newcommand{\tableheadline}[1]{\multicolumn{1}{c}{\spacedlowsmallcaps{#1}}}
 \newcommand{\myfloatalign}{\centering} % To be used with each float for alignment
-\usepackage{caption}
+\usepackage[hypcap, justification=centering]{caption}
 \captionsetup{format=hang,font=small}
 
 %----------------------------------------------------------------------------------------
@@ -245,9 +245,7 @@ hypertexnames=true, pdfhighlight=/O, urlcolor=webbrown, linkcolor=black, citecol
 %----------------------------------------------------------------------------------------
 
 \usepackage{setspace}
-\onehalfspacing
-\usepackage{indentfirst}
-\setlength{\parindent}{0in}
+\setstretch{1.15}
 \usepackage[margin=1.5in]{geometry}
 
 % Algorithm
@@ -255,7 +253,8 @@ hypertexnames=true, pdfhighlight=/O, urlcolor=webbrown, linkcolor=black, citecol
 
 \usepackage{multirow}
 \usepackage{rotating}
-\usepackage{enumerate}
+\usepackage{enumitem}
+\setlist{noitemsep}
 
 % Tikz
 \usepackage{tikz}
@@ -280,3 +279,13 @@ hypertexnames=true, pdfhighlight=/O, urlcolor=webbrown, linkcolor=black, citecol
 
 \tikzstyle{Node}=[circle, draw, minimum size=6mm]
 \usepackage{colortbl}
+
+\usepackage{isomath}
+\renewcommand{\vec}{\vectorsym}
+\newcommand{\mat}[1]{\matrixsym{#1}}
+\newcommand{\dif}{\, \mathrm{d}}
+\newcommand{\defterm}[1]{\textbf{\emph{#1}}}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\sign}{sgn}
+\algrenewcommand{\alglinenumber}[1]{\scriptsize\circled{#1}}% circled line numbers

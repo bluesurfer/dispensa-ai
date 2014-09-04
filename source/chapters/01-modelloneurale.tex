@@ -1,61 +1,52 @@
 %!TEX root = ../main.tex
 
-\chapter{Modello Neurale} % (fold)
+\chapter{Modello Neurale}
 \label{cha:modello_neurale}
-Le reti neurali artificiali sono nate per riprodurre attività tipiche del cervello umano come la percezione di immagini, il riconoscimento di forme, la comprensione del linguaggio, il coordinamento senso-motorio, ecc. A tale scopo si sono studiate le caratteristiche del cervello umano.\\									
 
-Nel sistema nervoso esistono miliardi di neuroni (cellule nervose).
-Nel modello biologico un \textbf{neurone} è caratterizzato da:
+Le reti neurali artificiali sono state create per riprodurre attività tipiche del cervello umano quali la percezione di immagini, il riconoscimento di forme, la comprensione del linguaggio e il coordinamento senso-motorio. A tale scopo sono state studiate le caratteristiche del cervello umano.								
+
+Nel sistema nervoso esistono miliardi di neuroni (cellule nervose). Nel modello biologico un \textbf{neurone} è caratterizzato da:
 \begin{itemize}
 	\item \textbf{corpo cellulare (soma)}: l'unità di calcolo del neurone (5/10 micron);
 	\item \textbf{assone}: meccanismo di output di un neurone;
-	\item \textbf{dendriti}: ricevono segnali in input da altri assoni tramite le \textbf{sinapsi}
+	\item \textbf{dendriti}: ricevono segnali in input da altri assoni tramite le \textbf{sinapsi}.
 \end{itemize}
-
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=\textwidth]{images/neuron.png}
-	\caption{Neuroni biologici}\label{fig:neuron}
+	\caption{Un neurone biologico.}\label{fig:neuron}
 \end{figure}
+All'estremità l'assone si ramifica formando terminali attraverso i quali i segnali elettrici vengono trasmessi ad altre cellule (ad esempio ai dendriti di altri neuroni). Tra un terminale di un assone e la cellula ricevente esiste uno spazio: i segnali superano questo spazio per mezzo di sostanze chimiche dette \emph{neurotrasmettitori}. Il punto di connessione tra terminale e dendrite è detto \textbf{sinapsi}.
 
-All’estremità l'assone si ramifica formando terminali attraverso i quali i segnali elettrici vengono trasmessi ad altre cellule (ad esempio ai dendriti di altri neuroni). Tra un terminale di un assone e la cellula ricevente esiste uno spazio. I segnali superano questo spazio per mezzo di sostanze chimiche dette \emph{neurotrasmettitori}. Il punto di connessione tra terminale e dendrite è detto \textbf{sinapsi}.
-
-\newpage
 La trasmissione di un segnale nella corteccia cerebrale è un processo complesso.
-In maniera molto semplificata, tale processo si compone delle seguenti fasi:
+In maniera molto semplificata, è composto delle seguenti fasi:
 \begin{enumerate}
-	\item Il corpo cellulare esegue una somma pesata dei segnali in ingresso;
-	\item Se il risultato supera un certo valore soglia allora si produce un \textbf{potenziale d'azione}; una scarica di impulsi elettrici, che viene inviata all'assone. In questo caso, si dice che la cellula ``spari'' altrimenti non fa nulla;
-	\item Quando il segnale elettrico raggiunge la sinapsi, viene rilasciato chimicamente un “neuro trasmettitore” che sarà combinato con i “recettori” nella membrana post-sinaptica (vedi Figura~\ref{fig:synapse});
-	\item I recettori post-sinaptici provocano una diffusione del segnale elettrico nel neurone post-sinaptico.
+	\item il corpo cellulare esegue una somma pesata dei segnali in ingresso;
+	\item se il risultato supera un certo valore soglia allora si produce un \textbf{potenziale d'azione}, ovvero una scarica di impulsi elettrici che viene inviata all'assone. In questo caso si dice che il neurone ha \emph{sparato}, altrimenti è rimasto inattivo;
+	\item quando il segnale elettrico raggiunge la sinapsi, viene rilasciato chimicamente un \emph{neurotrasmettitore} che si combinerà con i \emph{recettori} nella membrana post-sinaptica;
+	\item i recettori post-sinaptici provocano una diffusione del segnale elettrico nel neurone post-sinaptico.
 \end{enumerate}
-
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=8cm]{images/synapse.png}
-	\caption{La sinapsi}\label{fig:synapse}
+	\caption{La sinapsi.}\label{fig:synapse}
 \end{figure}
-\emph{L'apprendimento} si attua modificando la cosiddetta \textbf{efficacia sinaptica}, ovvero l'ammontare di corrente che entra nel neurone post-sinaptico rispetto al potenziale d'azione del neurone pre-sinaptico. In questo contesto le sinapsi possono essere: \textbf{eccitatorie}, nel senso che favoriscono la generazione di potenziale d'azione nel neurone post-sinaptico, oppure \textbf{inibitorie} che, invece, ne limitano la generazione.
-Il cervello umano è un calcolatore complesso, non lineare e parallelo. Pur essendo costituito da elementi di elaborazione molto semplici (i neuroni), è in grado di eseguire computazioni complesse, come il riconoscimento, la percezione e il controllo del movimento, molte volte più velocemente del più veloce degli attuali calcolatori.\\
+L'\textbf{apprendimento} si attua modificando la cosiddetta \textbf{efficacia sinaptica}, ovvero l'ammontare di corrente che entra nel neurone post-sinaptico rispetto al potenziale d'azione del neurone pre-sinaptico. In questo contesto le sinapsi possono essere \textbf{eccitatorie}, nel senso che favoriscono la generazione di potenziale d'azione nel neurone post-sinaptico, oppure \textbf{inibitorie}, se ne limitano la generazione.
 
 Nel cervello non esiste un controllo centralizzato, nel senso che le varie zone del cervello funzionano insieme, influenzandosi reciprocamente e contribuendo alla realizzazione di uno specifico compito.
 
-\newpage
+Infine, il cervello è \emph{fault tolerant}, ovvero se un neurone o una delle sue connessioni sono danneggiati, il cervello continua a funzionare, anche se con prestazioni leggermente degradate. In particolare, le prestazioni del processo celebrale degradano gradualmente man mano che si distruggono sempre più neuroni (\emph{graceful degradation}).
 
-Infine, il cervello è \emph{fault tolerant}, cioè se un neurone o una delle sue connessioni sono danneggiati, il cervello continua a funzionare, anche se con prestazioni leggermente degradate. In particolare, le prestazioni del processo cerebrale degradano gradualmente man mano che si distruggono sempre più neuroni (\emph{graceful degradation}).
-A tale scopo si sono studiate le caratteristiche del cervello umano.
-Quindi, per riprodurre artificialmente il cervello umano occorre realizzare una rete di elementi molto semplici che sia una struttura \textbf{distribuita}, massicciamente \textbf{parallela}, capace di \textbf{apprendere} e quindi di \textbf{generalizzare} (cioè produrre uscite in corrispondenza di ingressi non incontrati durante l’addestramento).\\
+Per riprodurre artificialmente il cervello umano occorre realizzare una rete di elementi molto semplici che sia una struttura \textbf{distribuita}, massicciamente \textbf{parallela}, capace di \textbf{apprendere} e quindi di \textbf{generalizzare} (cioè produrre uscite in corrispondenza di ingressi non incontrati durante l'addestramento).
 
-Il metodo più usato per addestrare una rete neurale consiste nel presentare in ingresso alla rete un insieme di esempi (training set). La risposta fornita dalla rete per ogni esempio viene confrontata con la risposta desiderata, si valuta la differenza (errore) fra le due e, in base a tale differenza, si aggiustano i pesi. Questo processo viene ripetuto sull’intero training set finché le uscite della rete producono un errore al di sotto di una soglia prestabilita.\\
+Il metodo più usato per addestrare una rete neurale consiste nel presentare in ingresso alla rete un insieme di esempi (training set). La risposta fornita dalla rete per ogni esempio viene confrontata con la risposta desiderata, si valuta la differenza (errore) fra le due e, in base ad essa, si aggiustano i pesi. Questo processo viene ripetuto sull'intero training set finché le uscite della rete producono un errore al di sotto di una soglia prestabilita.
 
 Anche se di recente introduzione, le reti neurali trovano valida applicazione in settori quali predizione, classificazione, riconoscimento e controllo, portando spesso contributi significativi alla soluzione di problemi difficilmente trattabili con metodologie classiche.
 
-\newpage
-
-\section{Modello di McCulloch e Pitts} % (fold)
+\section{Modello di McCulloch \& Pitts}
 \label{sec:modello_di_mcculloch_e_pitts}
-Si introduce ora un modello artificiale del neurone biologico. Il neurone artificiale ha molti ingressi ed una sola uscita. Ogni ingresso ha associato un peso, che determina la conducibilità del canale di ingresso. L’attivazione del neurone è una funzione della somma pesata degli ingressi.
 
+Nel 1943, W. McCulloch e W. Pitts hanno presentato un modello artificiale del neurone biologico, avente molti ingressi ed una sola uscita: ciascun ingresso ha associato un peso, che determina la conducibilità del canale di ingresso. L'attivazione del neurone è una funzione della somma pesata degli ingressi.
 \begin{figure}[h!]
 	\centering
 	\begin{tikzpicture}[shorten >=1pt, node distance=\layersep]
@@ -78,31 +69,22 @@ Si introduce ora un modello artificiale del neurone biologico. Il neurone artifi
 		\node[above=0.5cm of I-1] (In) {Input layer};
 		\node[right=\layersep of In] {Output layer};
 	\end{tikzpicture}
-	\caption{Neurone artificiale nel modello M\&P}
+	\caption{Neurone artificiale nel modello McCulloch \& Pitts.}
 \end{figure}
 
-Un insieme di neuroni artificiali forma una \emph{rete artificiale}. Una rete neurale è un grafo diretto pesato $N=(V,E,w)$ dove $V=\{ 0,1,\dots, n\}$ è l'insieme delle unità (o neuroni), $E \subseteq V \times V$ è l'insieme di connessioni e $w:E \rightarrow \mathbb{R}$ è una funzione che assegna un peso con valore reale $w(i,j)$ per ogni connessione $(i,j)\in E$.\\
+\noindent Un insieme di neuroni artificiali forma una \textbf{rete neurale}: essa può essere rappresentata mediante un grafo diretto pesato $N=(V, E, w)$ dove $V$ è l'insieme delle unità (o neuroni), $E \subseteq V \times V$ è l'insieme di connessioni e $w:E \rightarrow \mathbb{R}$ è una funzione che assegna un peso con valore reale $w(i,j)$ per ogni connessione $(j, i)\in E$. I pesi rappresentano l'efficacia sinaptica: pesi positivi amplificano il segnale, mentre quelli negativi lo inibiscono. Come notazione sarà utilizzata $w_{ij}$ anziché $w(i,j)$.
 
-I pesi rappresentano l'efficacia sinaptica: pesi positivi amplificano il segnale, mentre quelli negativi lo inibiscono. Come notazione sarà utilizzata $w_{ij}$ anziché $w(i,j)$.\\
-
-Un neurone si attiva se la somma pesata $\sum_j w_{ij} n_j$ degli input supera un certo valore soglia $\mu_i$. In termini matematici:
-\begin{align}
-	n_i(t + 1) = \Theta\left(\sum_j w_{ij} n_j(t) - \mu_i \right)
+Un neurone si attiva se la somma pesata degli input supera un certo valore soglia $\mu_i$\begin{align}
+	x_i = \Theta\left(\sum_j w_{ij} x_j - \mu_i \right)
 \end{align}
-
-\newpage
-
-Si tratta di un \textbf{modello semplificato} dove $\Theta(x)$ è la funzione di transizione o di attivazione ed in questo caso è discreta.
+dove $\Theta(x)$ è la \textbf{funzione di attivazione} e può essere \emph{discreta}, come
 \begin{align}
-	n_i(t + 1) =
-	\begin{cases}
-		1 & \mbox{if } \displaystyle\sum_j w_{ij} n_j \geq \mu_i \\
-		0 & \mbox{otherwise} 
+	x_i = \begin{cases}
+		1 & \mbox{se } \displaystyle\sum_j w_{ij} x_j \geq \mu_i \\
+		0 & \mbox{altrimenti} 
 	\end{cases}
 \end{align}
-
-Anziché utilizzare una funzione discreta si possono adottare funzioni continue in modo tale da rendere il sistema più realistico. In questa caso l'output corrisponde alla frequenza delle volte in cui un neurone trasmette. Esistono diverse funzioni di transizione continue; le più usate sono la sigmoidea e la tangente iperbolica.\\
-
+oppure \emph{continua}, in modo tale da rendere il sistema più realistico: le funzioni continue più utilizzate sono la \emph{sigmoidea} e la \emph{tangente iperbolica}, in quanto permettono di ridurre la varianza in output di un neurone mappando il risultato della somma pesata entro un intervallo ridotto, $[0, 1]$ nel caso della prima e $[-1, 1]$ nel caso della seconda.
 \begin{figure}[h!]
 	\begin{center}
 		\subfigure[Tangente iperbolica]{
@@ -114,15 +96,6 @@ Anziché utilizzare una funzione discreta si possono adottare funzioni continue 
 			\draw[color=blue, thick] plot[id=tanh] function{tanh(x)};
 		\end{tikzpicture}}
 		\qquad
-		\subfigure[Lineare]{
-		\begin{tikzpicture}[domain=-1:1,scale=1.5]
-			\draw[->] (-1,0) -- (1,0) node[right] {\tiny$x$};
-			\draw[->] (0,-1.2) -- (0,1.2) node[above] {\tiny$f(x)$};
-			\draw[dashed, thin] plot function{1} node[above]{\tiny +1};
-			\draw[dashed, thin] plot function{-1} node[above]{\tiny-1};
-			\draw[color=red, thick] plot[id=x] function{x};
-		\end{tikzpicture}}
-		\qquad
 		\subfigure[Sigmoidea]{
 		\begin{tikzpicture}[domain=-1:1,scale=1.5]
 			\draw[->] (-1,0) -- (1,0) node[right] {\tiny$x$};
@@ -130,18 +103,15 @@ Anziché utilizzare una funzione discreta si possono adottare funzioni continue 
 			\draw[dashed, thin] plot function{1} node[above]{\tiny +1};
 			\draw[color=orange, thick] plot[id=sigmoidal] function{1 / (1 +  exp(- 10 * x))};
 		\end{tikzpicture}}
-		\caption{Le funzioni di attivazione più utilizzate.}
+		\caption{Le funzioni di attivazione continue più utilizzate.}
 	\end{center}
 \end{figure}
 
-Lo scopo delle funzioni di attivazione è ridurre la varianza in output di un neurone mappando il risultato della somma pesata entro un intervallo; generalmente compreso tra $[-1, 1]$ oppure $[0, 1]$.
+\noindent È possibile sbarazzarsi dei valori soglia associati ai neuroni aggiungendo una nuova unità extra permanentemente bloccata a -1. In questo modo i valori soglia diventano pesi e possono essere opportunamente aggiustati durante l'apprendimento.
 
-\newpage
+\medskip
 
-\subsection{Proprietà del modello M\&P} % (fold)
-\label{sub:proprietà_del_modello}
-Combinando opportunamente i neuroni di M\&P si possono costruire reti in grado di realizzare qualsiasi operazione del calcolo proposizionale.
-
+Combinando opportunamente i neuroni di McCulloch \& Pitts si possono costruire reti in grado di realizzare qualsiasi operazione del calcolo proposizionale. È importante notare che in questo modello \textbf{non} avviene ancora alcun tipo di apprendimento: i pesi sono fissi, mentre l'apprendimento si realizza attraverso la variazione dei pesi sinaptici.
 \begin{figure}[h!]
 	\centering
 
@@ -154,7 +124,7 @@ Combinando opportunamente i neuroni di M\&P si possono costruire reti in grado d
 		\path 
 		(I-1) edge[->] node[above] {1} (S)
 		(I-2) edge[->] node[above] {1} (S)
-		(S) edge[->] node[above] {$1 \leq \frac{3}{2}$} (O);
+		(S) edge[->] node[above] {$1 < \frac{3}{2}$} (O);
 	\end{tikzpicture}}
 	\qquad
 	\subfigure[OR]{
@@ -176,22 +146,25 @@ Combinando opportunamente i neuroni di M\&P si possono costruire reti in grado d
 		\node[right of=S] (O) {0};
 		\path 
 		(I) edge[->] node[above] {-1} (S)
-		(S) edge[->] node[above] {$-1 \leq -\frac{1}{2}$} (O);
+		(S) edge[->] node[above] {$-1 < -\frac{1}{2}$} (O);
 	\end{tikzpicture}}
 	\caption{Operazioni logiche elementari nel modello M\&P.}
 \end{figure}
 
-È importante notare che in questo modello \textbf{non} avviene ancora nessun tipo apprendimento. I pesi, infatti, rimangono fissi; l'apprendimento si realizza attraverso la variazione/aggiornamento dei pesi sinaptici.
-% subsection proprietà_del_modello (end)
-% section modello_di_mcculloch_e_pitts (end)
-
 \newpage
 
-\section{Tipi di architetture della rete} % (fold)
+\section{Tipi di architetture della rete}
 \label{sec:tipi_di_architetture_della_rete}
-Il modo con cui è strutturata la rete dipende dall'algoritmo di apprendimento che si ha intenzione di usare. In generale si identificano tre classi di reti:
+
+In generale le reti neurali vengono classificate sulla base di tre caratteristiche:
 \begin{itemize}
-	\item \textbf{reti feedforward ad uno strato}: In questa forma semplice di rete a strati, abbiamo i nodi di input (input layer) e uno strato di neuroni (output layer). Il segnale nella rete si propaga in avanti in modo aciclico, partendo dal layer di input e terminando in quello di output;
+	\item \textbf{presenza di cicli}: reti \emph{feedforward} (o acicliche) e reti \emph{ricorrenti} (o cicliche);
+	\item \textbf{connettività}: reti fortemente o scarsamente connesse;
+	\item \textbf{numero di strati}: reti \emph{single layer} e reti \emph{multilayer}.
+\end{itemize}
+La scelta della rete neurale da utilizzare dipende dalla tipologia di problema che si vuole risolvere. In generale si identificano tre classi di reti:
+\begin{itemize}
+	\item \textbf{reti feedforward ad uno strato}: reti di questo tipo contengono i nodi di input (\emph{input layer}) e uno strato di neuroni (\emph{output layer}). Il segnale nella rete si propaga in avanti in modo aciclico, partendo dallo strato di input ed arrivando in quello di output;
 	\begin{figure}[h!]
 		\centering
 		\begin{tikzpicture}[->, node distance=\layersep]
@@ -213,11 +186,9 @@ Il modo con cui è strutturata la rete dipende dall'algoritmo di apprendimento c
 			\node[annot,above of=I-1, node distance=1cm] (il) {Input layer};
 			\node[annot,right of=il] {Output layer};
 		\end{tikzpicture}
-		\caption{Rete forward ad uno strato}
+		\caption{Rete feedforward ad uno strato.}
 	\end{figure}
-    
-	\item \textbf{reti feedforward a più strati:} questa classe di reti feedforward si distingue dalla precedente dal fatto che tra lo strato di input e quello di output abbiamo uno o più strati di neuroni nascosti (\textbf{hidden layers}).
-	Questo tipo di architettura fornisce alla rete una prospettiva globale in quanto aumentano le interazioni tra neuroni;
+	\item \textbf{reti feedforward a più strati}: in questo caso, tra lo strato di input e quello di output, sono presenti uno o più strati di neuroni nascosti (\textbf{hidden layers}). Questo tipo di architettura fornisce alla rete una prospettiva globale in quanto aumentano le interazioni tra neuroni;
 	\begin{figure}[h!]
 		\centering
 		\begin{tikzpicture}[->, node distance=\layersep]
@@ -250,13 +221,9 @@ Il modo con cui è strutturata la rete dipende dall'algoritmo di apprendimento c
 			\node[annot,left of=hl] {Input layer};
 			\node[annot,right of=hl] {Output layer};
 		\end{tikzpicture}
-		\caption{Rete forward a più strati}
+		\caption{Rete feedforward a più strati.}
 	\end{figure}
-    
-	\newpage
-    
-	\item \textbf{reti feedback o ricorrenti}: una rete ricorrente si distingue dalle precedenti nel fatto che è ciclica. La presenza di cicli ha un impatto profondo sulle capacità di apprendimento della rete e sulle sue performance, in particolare rendono il sistema \textbf{dinamico}.
-    
+	\item \textbf{reti ricorrenti}: reti di questo tipo contengono cicli, la cui presenza ha un impatto profondo sulle capacità di apprendimento della rete e sulle sue performance, in quanto la rendono un sistema \textbf{dinamico}.    
 	\begin{figure}[h!]
 		\centering
 		\begin{tikzpicture}[->, node distance=\layersep]
@@ -289,9 +256,7 @@ Il modo con cui è strutturata la rete dipende dall'algoritmo di apprendimento c
 			\node[annot,above of=I-1, node distance=1cm] (il) {Input layer};
 			\node[annot,right of=il] {Output layer};
 		\end{tikzpicture}
-		\caption{Rete feedback.}
+		\caption{Rete ricorrente.}
 	\end{figure}
     
 \end{itemize}
-% section tipi_di_architetture_della_rete (end)
-% chapter reti_neurali (end)

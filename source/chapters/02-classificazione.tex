@@ -1,29 +1,21 @@
 %!TEX root = ../main.tex
 
-\chapter{Problema di classificazione} % (fold)
+\chapter{Problema di classificazione}
 \label{cha:problema_di_classificazione}
 
-In un problema tipico di classificazione abbiamo:
-\begin{itemize}
-	\item alcune \textbf{caratteristiche} $f_1, f_2, \dots,f_n$;
-	\item alcune \textbf{classi} $c_1, c_2, \dots, c_m$.
-\end{itemize}
-Il problema consiste nel classificare un oggetto in base alla caratteristiche. Un oggetto può essere rappresentato in uno spazio n-dimensionale e pertanto è possibile trattare problemi di classificazione attraverso metodi geometrici.\\
+In un tipico problema di classificazione si hanno a disposizione un insieme di \textbf{caratteristiche} $f_1, f_2, \dots,f_n$ e un insieme di \textbf{classi} $c_1, c_2, \dots, c_m$: l'obiettivo consiste nel classificare degli \emph{oggetti} in base alle loro caratteristiche. Un oggetto può essere rappresentato in uno spazio $n$-dimensionale e pertanto è possibile trattare problemi di classificazione attraverso metodi geometrici.
 
-Questi oggetti sono comunemente chiamati \textbf{pattern}. Una rete neurale riconosce pattern a seguito di una \emph{fase di addestramento}, nella quale alla rete vengono presentati ripetutamente un insieme di pattern di addestramento con specificato per ognuno la categoria a cui appartengono. Quando sarà presentato un pattern mai visto prima ma appartenente ad una stessa classe di pattern che la rete ha appreso, essa sarà in grado di classificarlo grazie alle informazioni estratte dai dati di addestramento.\\
+Lo spazio multidimensionale è suddiviso in \textbf{regioni di decisione}, ovvero aree all'interno delle quali ricadono tutti gli oggetti di una classe. I \textbf{confini} di queste regioni sono determinate dalla rete attraverso il processo di addestramento
 
-Supponendo di operare nel contesto bidimensionale ogni pattern è rappresentato da un punto. Questo spazio è suddiviso in \textbf{regioni di decisione}, ognuna delle quali associata ad una classe. I confini di queste regioni sono determinate dalla rete attraverso il processo di addestramento.
+Gli oggetti da classificare sono comunemente chiamati \textbf{pattern}. Una rete neurale impara a riconosce dei pattern a seguito di una \emph{fase di addestramento}, durante la quale alla rete vengono presentati un insieme di pattern di addestramento con l'indicazione della classe di appartenenza. Quando sarà presentato un nuovo pattern alla rete, appartenente ad una classeche questa ha precedentemente appreso, essa sarà in grado di classificarlo grazie alle informazioni estratte dai dati di addestramento.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=\textwidth]{images/classify.png}
-	\caption[Separabilità lineare nella classificazione]{Rappresentazione geometrica di alcuni problemi di classificazione.}
+	\caption[Separabilità lineare nella classificazione.]{Rappresentazione geometrica di alcuni problemi di classificazione.}
 \end{figure}
 
-\newpage
+\noindent Quando si intende risolvere un problema di classificazione con una rete neurale, questa dovrà avere tante unità di input quante sono le caratteristiche degli oggetti e tanti neuroni di output quante sono le possibili classi.
 
-\section{Percettrone a singolo strato} % (fold)
-\label{sec:percettrone_a_singolo_strato}
-Una rete neurale può essere utilizzata per risolvere un problema di classificazione. La prima idea fu di utilizzare una rete neurale ad uno strato con connessione feedforward: il \textbf{percettrone} (Rosenblatt 1958).
 \begin{figure}[h!]
 	\centering
 	\begin{tikzpicture}[->, node distance=\layersep]
@@ -45,43 +37,16 @@ Una rete neurale può essere utilizzata per risolvere un problema di classificaz
 		\node[annot,above of=I-1, node distance=1cm] (il) {Input layer};
 		\node[annot,right of=il] {Output layer};
 	\end{tikzpicture}
-	\caption[Percettrone]{Rete forward ad uno strato: le tre unità in input rappresentano tre caratteristiche, mentre quelle output rappresentatano le due classi che la rete dovrà imparare o predire.}
-\end{figure}
-
-È possibile sbarazzarsi dei valori soglia associati ai neuroni aggiungendo una nuova unità extra permanentemente bloccata a -1. In questo modo i valori soglia diventano pesi e possono essere opportunamente aggiustati durante l'apprendimento.
-
-\begin{figure}[h!]
-	\centering
-	\begin{tikzpicture}[shorten >=1pt, node distance=\layersep]
-		% Draw the input layer nodes
-		\node[input neuron, fill=RoyalBlue, pin=left:Extra Unit $x_0:-1$] (I-0) at (0, 0) {};
-		\foreach \name / \y in {1,...,3}
-		% This is the same as writing \foreach \name / \y in {1/1,2/2,3/3,4/4}
-		\node[input neuron, pin=left:$x_\y$] (I-\name) at (0,-\y) {};
-		\node[input neuron,  pin=left:$x_n$] (I-4) at (0,-5) {};
-		\draw[dotted, thick] (I-3) -- (I-4);
-		% Draw the output layer node
-		\node[output neuron, right of=I-3] (O) {$\Sigma$};
-		\node[neuron, rectangle, inner sep=5pt, right of=O] (F) {$\Theta(x)$};
-		\node[right of=F] (Y) {Output};
-		\path (O) edge [->] (F)
-		(F) edge [->] (Y);
-		% Connect every node in the hidden layer with the output layer
-		\foreach \source in {1,...,3}
-		\path (I-\source) edge [->, above] node {\scriptsize$w_{i\source}$} (O);
-		\path (I-4) edge [->] node [above=0.3cm of I-4] {\scriptsize$w_{in}$} (O);
-		\path (I-0) edge [->, above right] node{\scriptsize$w_{i0} = \mu_i$} (O);
-		\node[above=0.5cm of I-0] (In) {Input layer};
-		\node[right=\layersep of In] {Output layer};
-	\end{tikzpicture}
-	\caption{Valori soglia come pesi.}
+	\caption[Esempio di percettrone.]{Rete feedforward ad uno strato usata per la classificazione.}
 \end{figure}
 
 \newpage
 
-Il percettrone è un idea semplice ed elegante: imita il neurone umano ed è in grado di imparare da esempi che gli vengono presentati. Tuttavia soffre di alcune limitazioni. Il percettrone è, infatti, in grado di risolvere solo problemi \emph{linearmente separabili}, ovvero problemi in cui le regioni di decisione si possono separare con un iperpiano.\\
+\section{Percettrone a singolo strato}
+\label{sec:percettrone_a_singolo_strato}
+La prima rete neurale utilizzata per risolvere problemi di classificazione è il \textbf{percettrone} di Rosenblatt (1958), un classificatore \textbf{binario} caratterizzato da un singolo strato con connessioni feedforward.
 
-Ad esempio, non è possibile implementare l'operazione XOR attraverso un percettrone in quanto non linearmente separabile. Infatti, come si vede nel seguente schema sono necessarie due rette per poter separare le due classi.
+Il percettrone è un idea semplice ed elegante: imita il neurone umano ed è in grado di imparare da esempi che gli vengono presentati. Tuttavia, come dimostrato da M. Minsky e S. Papert (1969), ha una pesante limitazione: è in grado di risolvere solo problemi \textbf{linearmente separabili}, ovvero problemi in cui le regioni di decisione si possono separare con un iperpiano.
 
 \begin{figure}[h!]
 	\centering
@@ -112,82 +77,51 @@ Ad esempio, non è possibile implementare l'operazione XOR attraverso un percett
 		
 		
 	\end{tikzpicture}
-	\caption{Non separabilità lineare dell'operatore XOR}
+	\caption{Non separabilità lineare dell'operatore XOR.}
 \end{figure}
 
-La convergenza del percettrone è garantita dal seguente teorema:
-
-\begin{thm}[Teorema di Convergenza del Percettrone]
-	Se il problema di classificazione è linearmente separabile allora la fase di apprendimento converge (termina) ad un'appropriata impostazione dei pesi in un numero finito di passi.
+\noindent La convergenza del percettrone è garantita dal seguente teorema:
+\begin{thm}[Teorema di convergenza del percettrone - N. J. Nilsson, 1965]
+	Se il problema di classificazione è linearmente separabile allora la fase di apprendimento converge ad un'appropriata impostazione dei pesi in un numero finito di passi.
 \end{thm}
+Nella pratica non è dato sapere se un problema sia linearmente separabile o meno. La convergenza si può comunque ottenere aggiustando i parametri del percettrone come il numero di iterazioni o il fattore di apprendimento: in questo caso, tuttavia, la convergenza è artificiale.
 
-Nella pratica non è dato sapere se un problema è o meno linearmente separabile. La convergenza si può comunque ottenere aggiustando i parametri del percettrone come ad esempio il numero di iterazioni o il fattore di apprendimento. In questo caso, tuttavia, la convergenza è artificiale.
-% section percettrone_a_singolo_strato (end)
-
-
-\newpage
-
-\section{Percettrone a più strati} % (fold)
+\section{Percettrone a più strati}
 \label{sec:percettrone_a_più_strati}
-Come si è visto nei paragrafi precedenti il percettrone a singolo strato è limitato ai problemi linearmente separabili. Aggiungendo strati nascosti è possibile, tuttavia, rappresentare tutte le operazioni booleane incluso lo XOR. I percettroni multi-strato sono noti da molto tempo, ma gli algoritmi per l'apprendimento sono stati ideati solo recentemente (1986).\\
 
-La rete di un percettrone multi-strato consiste in un insieme di ingressi (input layer), uno o più strati nascosti di neuroni (hidden layers) e un insieme di neuroni di uscita (output layer). Il segnale di input si propaga attraverso la rete in avanti da layer a layer. Una rete di questo tipo ha tre caratteristiche distintive:
+È possibile sopperire alle limitazioni dei percettroni a singolo strato aggiungendo strati di neuroni nascosti: il numero di strati, infatti, influenza la forma generale che possono assumere le regioni di decisione. Come si può osservare in figura \ref{fig:architetture}:
 \begin{itemize}
-	\item ogni neurone include una \textbf{funzione di attivazione non lineare differenziabile }(ad es: funzione
-	sigmoidale);
-	\item la rete contiene uno o più strati nascosti (\textbf{hidden layers}) che non fanno parte né dell'input né dell'output della rete;
-	\item la rete ha un \textbf{alta connettività}.
+	\item nelle reti a singolo strato si possono avere regioni di decisione separabili mediante un \textbf{iperpiano};
+	\item nelle reti a due strati si possono avere \textbf{regioni convesse}, aperte o chiuse;
+	\item nelle reti a tre strati le regioni possono avere forma arbitraria, la cui complessità dipende dal numero di neuroni nascosti.
 \end{itemize}
-In questa rete troviamo due tipi di segnali:
-\begin{enumerate}
-	\item \textbf{segnali di funzione:} un segnale di funzione è un segnale di input o stimolo che entra nel layer di input, si propaga in avanti attraverso gli strati nascosti per emergere al layer di uscita come segnale di output;
-	\item \textbf{segnale di errore:} un segnale di errore ha origine nel layer di uscita e si propaga all'indietro attraverso la rete.
-\end{enumerate}
-
-Ogni neurone nascosto o d'uscita di un percettrone multistrato esegue due computazioni:
-\begin{enumerate}
-	\item la \textbf{computazione del segnale di funzione} espressa come funzione non lineare continua
-	di un segnale di input e dei pesi sinaptici associati al neurone;
-	\item la \textbf{computazione di un vettore gradiente} necessario per aggiornamento dei pesi
-	sinaptici.
-\end{enumerate}
-
-
-\newpage
 
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=10cm]{images/layers}
-	\caption[Confronto tra diverse architetture di rete]{Confronto tra diverse architetture di rete. Si osservi che ad ogni nuovo strato intermedio della rete, si ha una migliore classificazione delle forme che identificano le regioni delle due classi.}
+	\caption{Confronto tra architetture di rete.}
+	\label{fig:architetture}
 \end{figure}
 
+\noindent Le potenzialità dei percettroni multistrato sono note da tempo, ma gli algoritmi per l'apprendimento sono stati ideati solo recentemente (1986).
 
-% section percettrone_a_più_strati (end)
-
-\section{Previsione di serie temporali} % (fold)
+\section{Previsione di serie temporali}
 \label{sec:previsione_di_serie_temporali}
-Oltre ai problemi di classificazione, una rete neurale è in grado di affrontare anche altri tipi di problemi come ad esempio la previsione di una serie temporale \textbf{(time series prediction)}. Si tratta di un problema \emph{continuo} a differenza della classificazione che è, invece, \emph{discreto}.\\
 
-Si consideri una sequenza $P$ di vettori o scalari che dipendono dal tempo $t$.
+Le reti neurali, oltre alla classificazione e altri problemi \emph{discreti}, sono in grado di affrontare problemi \emph{continui} come la \textbf{previsione di una serie temporale}.
+
+Si consideri una sequenza $P$ di vettori che dipendono dal tempo $t$:
 \begin{align*}
-	P = \{x(t_0), x(t_1), \cdots, x(t_{i - 1}), x(t_i), x(t_{i + 1}), \cdots\}
+	P = \{\vec{x}(t_0), \vec{x}(t_1), \cdots, \vec{x}(t_{i - 1}), \vec{x}(t_i), \vec{x}(t_{i + 1}), \cdots\}
 \end{align*}
-$t$ è un valore reale e $x(t)$ è un segnale continuo.\\
+Per ottenere una serie $\{\vec{x}[t]\}$ da un segnale continuo $\vec{x}(t)$ è necessario \textbf{campionare} il segnale in punti discreti. 
 
-Per ottenere una serie $\{x[t]\}$ da un segnale continuo è necessario \emph{campionare} dal segnale in punti discreti. 
-
-\newpage
-
-Partendo da un tempo $t$ e campionando a ritroso, otteniamo la serie temporale $\{x[t], x[t-1], \cdots\}$. Lo scopo dell'analisi è di stimare $x$ a un tempo futuro.
+Partendo da un tempo $t$ e procedendo a ritroso, otteniamo la serie temporale $\{\vec{x}[t], \vec{x}[t-1], \dots\}$. Lo scopo dell'analisi è di stimare $x(t)$ a un tempo futuro
 \begin{align*}
-	\hat{x}[t+s] = f(x[t], x[t-1], \cdots)
+	\hat{\vec{x}}[t+s] = f(\vec{x}[t], \vec{x}[t-1], \dots)
 \end{align*}
-Dove $s$ è noto come \emph{orizzonte della previsione}. Si tratta di un problema di approssimazione di una funzione e può essere risolto utilizzando una rete neurale a due strati. Il risultato è garantito dal seguente teorema:
+dove $s$ è noto come \textbf{orizzonte della previsione}. Si tratta di un problema di approssimazione di una funzione che può essere risolto utilizzando una rete neurale a due strati.
 
-\begin{thm}[Teorema dell'approssimazione universale]
+\begin{thm}[Teorema dell'approssimazione universale - G. Cybenko, 1989 \& K. Hornik, 1991]
 	Una rete neurale multistrato feed-forward con un singolo strato nascosto, un percettrone, che contiene un numero finito di neuroni nascosti è un approssimatore universale di funzioni continue su sottoinsiemi compatti $\mathbb{R}^n$.
 \end{thm}
-
-% section previsione_di_serie_temporali (end)
-
-% chapter problema_di_classificazione (end)
