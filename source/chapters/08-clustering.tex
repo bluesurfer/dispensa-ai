@@ -79,7 +79,7 @@ Sia $\vec{y}$ un vettore $|V|$-dimensionale, dove
 \begin{displaymath}
 	y_i = \begin{cases}
  		1 & \text{se } i \in J \\
- 		0 & \text{altrimenti}
+ 		-1 & \text{altrimenti}
  	\end{cases}
 \end{displaymath}
 $\mat{D} = (d_{ij})$ la matrice diagonale dove $d_{ii} = \sum_j w_{ij}$ e $\mat{A}$ la matrice di adiacenza pesata. Si può dimostrare che
@@ -265,7 +265,7 @@ Si può utilizzare una qualunque tecnica di ottimizzazione quadratica per massim
 
 L'idea alla base della tecnica per l'estrazione di cluster possibilmente sovrapposti consiste nel rendere iterativamente \textbf{instabili} le strategie evolutivamente stabili associate agli insiemi dominanti precedentemente estratti: per fare ciò, si introducono \textbf{nuove strategie} nel gioco del clustering che siano best replies solo ed esclusivamente per le ESS già trovate.
 
-Sia $\Sigma$ una tupla di ESS di un gioco con matrice di payoff $\mat{A}$ di dimensione $n \times n$ e sia $\Sigma_i$ l'$i$-esima ESS contenuto nella tupla.
+Sia $\Sigma$ una tupla di ESS di un gioco con matrice di payoff $\mat{A}$ di dimensione $n \times n$ e sia $\Sigma_i$ l'$i$-esima ESS contenuta nella tupla.
 
 La $\Sigma$-extension $\mat{A}^\Sigma = (a_{ij}^\Sigma)$ della matrice di payoff $\mat{A}$ è definita come
 \begin{displaymath}

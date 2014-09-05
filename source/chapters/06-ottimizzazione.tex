@@ -137,20 +137,20 @@ Per imporre i vincoli richiesti dal problema del commesso viaggiatore si introdu
 	\end{displaymath}
 \end{itemize}
 Abbiamo quattro funzioni energia da minimizzare, tuttavia per poter utilizzare una rete di Hopfield è necessaria un'unica funzione: per questo motivo si esprime la funzione di costo totale come combinazione lineare delle funzioni energia $E_i$:
-\begin{align}
+\begin{displaymath}
 	E = E_1 + E_2 + E_3 + E_4
-\end{align}
+\end{displaymath}
 dove il peso da attribuire a ciascun termine è determinato dalle costanti positive $A, B, C, D$. C'è un ultimo problema da risolvere, ovvero la funzione energia dovrà essere della forma tipica di una rete di Hopfield:
-\begin{align*}
+\begin{displaymath}
 	E = - \frac{1}{2} \sum_{X, Y} \sum_{i, j} T_{Xi, Yj} V_{X, i} V_{Y, j} - \sum_{X, i} I_{X, i} V_{X, i}
-\end{align*}
+\end{displaymath}
 Per farlo, si introduce il termine
-\begin{align*}
+\begin{displaymath}
 	\delta_{i,j} = \begin{cases}
 		1 & \text{se } i = j \\
 		0 & \text{altrimenti}
 	\end{cases}
-\end{align*}
+\end{displaymath}
 e si riscrivono le funzioni $E_i$ come segue:
 \begin{align*}
 	E_1 &= \frac{D}{2} \sum_X \sum_{Y \neq X} \sum_i d_{X,Y} V_{X,i} (V_{Y, i+1} + V_{Y, i-1}) \\

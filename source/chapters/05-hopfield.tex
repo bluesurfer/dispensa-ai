@@ -186,7 +186,7 @@ La memoria è rappresentata da un insieme di $P$ patterns $\vec{x}^\mu$, con $\m
 
 In accordo al postulato di Hebb, sono utilizzati pesi proporzionali alla correlazione nell'attivazione tra un neurone pre e post sinaptico
 \begin{displaymath}
-	w_{ij} = \frac{1}{N} \sum_{\mu = 1}^p x_i^\mu x_j^\mu
+	w_{ij} = \frac{1}{N} \sum_{\mu = 1}^P x_i^\mu x_j^\mu
 \end{displaymath}
 dove $N$ è il numero di unità binarie con output $s_1, \dots, s_N$.
 
@@ -247,7 +247,7 @@ La \textbf{funzione energia} nel modello continuo è simile a quella nel caso di
 	E = - \frac{1}{2} \sum_i \sum_j w_{ij} V_i V_j + \sum_i \int_0^{V_i} g^{-1}_\beta (V) \, \dif V - \sum_i I_i V_i \label{eq:energycont}
 \end{align}
 
-Analogamente al caso discreto, il seguente teorema fornisce una condizione sufficiente per la convergenza del sistema.
+\noindent Analogamente al caso discreto, il seguente teorema fornisce una condizione sufficiente per la convergenza del sistema.
 \begin{thm}[Teorema di Hopfield (caso continuo) - J. J. Hopfield, 1982]
 	Se la matrice dei pesi di una rete di Hopfield è simmetrica con $\diag(W) = \vec{0}$, allora la funzione di energia \eqref{eq:energycont} è una funzione di Lyapunov per il sistema, quindi $\dif E / \dif t \leq 0$ con uguaglianza quando il sistema ha raggiunto un punto stazionario.
 \end{thm}

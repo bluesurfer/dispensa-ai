@@ -35,7 +35,7 @@ L'\textbf{apprendimento} si attua modificando la cosiddetta \textbf{efficacia si
 
 Nel cervello non esiste un controllo centralizzato, nel senso che le varie zone del cervello funzionano insieme, influenzandosi reciprocamente e contribuendo alla realizzazione di uno specifico compito.
 
-Infine, il cervello è \emph{fault tolerant}, ovvero se un neurone o una delle sue connessioni sono danneggiati, il cervello continua a funzionare, anche se con prestazioni leggermente degradate. In particolare, le prestazioni del processo celebrale degradano gradualmente man mano che si distruggono sempre più neuroni (\emph{graceful degradation}).
+Infine, il cervello è \emph{fault tolerant}, ovvero se un neurone o una delle sue connessioni sono danneggiati, il cervello continua a funzionare, anche se con prestazioni leggermente degradate. In particolare, le prestazioni del processo cerebrale degradano gradualmente man mano che si distruggono sempre più neuroni (\emph{graceful degradation}).
 
 Per riprodurre artificialmente il cervello umano occorre realizzare una rete di elementi molto semplici che sia una struttura \textbf{distribuita}, massicciamente \textbf{parallela}, capace di \textbf{apprendere} e quindi di \textbf{generalizzare} (cioè produrre uscite in corrispondenza di ingressi non incontrati durante l'addestramento).
 
@@ -72,18 +72,19 @@ Nel 1943, W. McCulloch e W. Pitts hanno presentato un modello artificiale del ne
 	\caption{Neurone artificiale nel modello McCulloch \& Pitts.}
 \end{figure}
 
-\noindent Un insieme di neuroni artificiali forma una \textbf{rete neurale}: essa può essere rappresentata mediante un grafo diretto pesato $N=(V, E, w)$ dove $V$ è l'insieme delle unità (o neuroni), $E \subseteq V \times V$ è l'insieme di connessioni e $w:E \rightarrow \mathbb{R}$ è una funzione che assegna un peso con valore reale $w(i,j)$ per ogni connessione $(j, i)\in E$. I pesi rappresentano l'efficacia sinaptica: pesi positivi amplificano il segnale, mentre quelli negativi lo inibiscono. Come notazione sarà utilizzata $w_{ij}$ anziché $w(i,j)$.
+\noindent Un insieme di neuroni artificiali forma una \textbf{rete neurale}: essa può essere rappresentata mediante un grafo diretto pesato $N=(V, E, w)$ dove $V$ è l'insieme delle unità (o neuroni), $E \subseteq V \times V$ è l'insieme di connessioni e $w:E \rightarrow \mathbb{R}$ è una funzione che assegna un peso con valore reale $w(i,j)$ per ogni connessione $(i, j)\in E$. I pesi rappresentano l'efficacia sinaptica: pesi positivi amplificano il segnale, mentre quelli negativi lo inibiscono. Come notazione sarà utilizzata $w_{ji}$ anziché $w(i,j)$.
 
-Un neurone si attiva se la somma pesata degli input supera un certo valore soglia $\mu_i$\begin{align}
+Un neurone si attiva se la somma pesata degli input supera un certo valore soglia $\mu_i$
+\begin{displaymath}
 	x_i = \Theta\left(\sum_j w_{ij} x_j - \mu_i \right)
-\end{align}
+\end{displaymath}
 dove $\Theta(x)$ è la \textbf{funzione di attivazione} e può essere \emph{discreta}, come
-\begin{align}
+\begin{displaymath}
 	x_i = \begin{cases}
 		1 & \mbox{se } \displaystyle\sum_j w_{ij} x_j \geq \mu_i \\
 		0 & \mbox{altrimenti} 
 	\end{cases}
-\end{align}
+\end{displaymath}
 oppure \emph{continua}, in modo tale da rendere il sistema più realistico: le funzioni continue più utilizzate sono la \emph{sigmoidea} e la \emph{tangente iperbolica}, in quanto permettono di ridurre la varianza in output di un neurone mappando il risultato della somma pesata entro un intervallo ridotto, $[0, 1]$ nel caso della prima e $[-1, 1]$ nel caso della seconda.
 \begin{figure}[h!]
 	\begin{center}
